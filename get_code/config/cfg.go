@@ -7,7 +7,7 @@ import (
 )
 
 type GetConfig struct {
-	Get   []string `json:"get"`
+	Code  []string `json:"code"`
 	Proxy string   `json:"proxy"`
 }
 
