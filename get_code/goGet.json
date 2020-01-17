@@ -1,8 +1,6 @@
 {
   "code": [
-    "github.com/astaxie/beego",
     "github.com/go-redis",
-    "github.com/go-sql-driver/mysql",
     "github.com/astaxie/beego",
     "github.com/agnibade/levenshtein",
     "github.com/bitly/go-nsq",
@@ -25,5 +23,6 @@
     "github.com/naoina/go-stringutil",
     "github.com/pelletier/go-toml",
     "github.com/pkg/errors"
-  ]
+  ],
+  "proxy":"192.168.20.151:1080"
 }
