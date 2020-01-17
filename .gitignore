@@ -8,3 +8,4 @@
 out
 gen
 get_code.code-workspace
+*.run

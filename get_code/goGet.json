@@ -3,6 +3,5 @@
     "github.com/astaxie/beego",
     "github.com/go-redis",
     "github.com/go-sql-driver/mysql"
-  ],
-  "proxy": "https://goproxy.cn"
+  ]
 }

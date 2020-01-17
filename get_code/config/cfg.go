@@ -7,8 +7,7 @@ import (
 )
 
 type GetConfig struct {
-	Code  []string `json:"code"`
-	Proxy string   `json:"proxy"`
+	Code []string `json:"code"`
 }
 
 func getContext(file string) ([]byte, error) {
