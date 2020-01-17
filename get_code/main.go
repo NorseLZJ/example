@@ -19,15 +19,22 @@ const (
 )
 
 func main() {
+	cfgT, err := config.Marshal(*cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	goPath := os.Getenv("GOPATH")
+	if goPath == "" {
+		log.Fatal("GOPATH is nil")
+	}
 
 	proxy := os.Getenv("GOPROXY")
 	if proxy == "" {
 		os.Setenv("GORROXY", defProxy)
 	}
-
-	cfgT, err := config.Marshal(*cfg)
-	if err != nil {
-		log.Fatal(err)
+	if cfgT.Proxy != "" {
+		os.Setenv("GORROXY", cfgT.Proxy)
 	}
 
 	codeTotal := len(cfgT.Code)

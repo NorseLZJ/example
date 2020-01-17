@@ -2,6 +2,28 @@
   "code": [
     "github.com/astaxie/beego",
     "github.com/go-redis",
-    "github.com/go-sql-driver/mysql"
+    "github.com/go-sql-driver/mysql",
+    "github.com/astaxie/beego",
+    "github.com/agnibade/levenshtein",
+    "github.com/bitly/go-nsq",
+    "github.com/bradfitz/gomemcache",
+    "github.com/dgrijalva/jwt-go",
+    "github.com/garyburd/redigo",
+    "github.com/go-sql-driver/mysql",
+    "github.com/gogo/protobuf",
+    "github.com/golang/groupcahe",
+    "github.com/golang/protobuf",
+    "github.com/golang/snappy",
+    "github.com/googleeapis/gax-go",
+    "github.com/gorilla/mux",
+    "github.com/gorilla/websocket",
+    "github.com/gpmgo/gopm",
+    "github.com/kai1987/go-text-censor",
+    "github.com/kai1987/zentao-api",
+    "github.com/lestrrat-go/jwx",
+    "github.com/naoina/toml",
+    "github.com/naoina/go-stringutil",
+    "github.com/pelletier/go-toml",
+    "github.com/pkg/errors"
   ]
 }
