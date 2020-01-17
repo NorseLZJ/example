@@ -47,11 +47,11 @@ func main() {
 			cmd := exec.Command("go", "get", "-u", code)
 			err := cmd.Start()
 			if err != nil {
-				log.Printf("get (%s), err : %v\n", code, err)
+				log.Printf("get (%s), Err : %v\n", code, err)
 			}
-			log.Printf("wait get (%s) finish\n", code)
+			log.Printf("get (%s) waiting ...\n", code)
 			err = cmd.Wait()
-			log.Printf("get (%s) err: %v\n", code, err)
+			log.Printf("wait err (%s) : %v\n", code, err)
 			wg.Done()
 		}(v)
 	}

@@ -8,9 +8,9 @@
     "github.com/dgrijalva/jwt-go",
     "github.com/garyburd/redigo",
     "github.com/go-sql-driver/mysql",
-    "github.com/gogo/protobuf",
+    "github.com/gogo/protobuf/proto",
     "github.com/golang/groupcahe",
-    "github.com/golang/protobuf",
+    "github.com/golang/protobuf/proto",
     "github.com/golang/snappy",
     "github.com/googleeapis/gax-go",
     "github.com/gorilla/mux",
@@ -22,7 +22,8 @@
     "github.com/naoina/toml",
     "github.com/naoina/go-stringutil",
     "github.com/pelletier/go-toml",
-    "github.com/pkg/errors"
+    "github.com/pkg/errors",
+    "gopkg.in/gorp.v1"
   ],
   "proxy":"192.168.20.151:1080"
 }
