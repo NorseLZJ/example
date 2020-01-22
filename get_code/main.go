@@ -21,7 +21,7 @@ const (
 )
 
 func main() {
-	cfgT := config.GetConfig{}
+	cfgT := &config.GetConfig{}
 	err := config.Marshal(*cfg, cfgT)
 	if err != nil {
 		log.Fatal(err)

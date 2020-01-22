@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/example/get_code/config"
+	"github.com/NorseLZJ/example/get_code/config"
 )
 
 var (
