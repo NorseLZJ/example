@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/example/get_code/config"
+	"github.com/NorseLZJ/example/get_code/config"
 )
 
 var (
@@ -16,6 +16,8 @@ var (
 
 const (
 	defProxy = "https:goproxy.cn"
+	goPath   = "GOPATH"
+	goProxy  = "GOPROXY"
 )
 
 func main() {
@@ -25,17 +27,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	goPath := os.Getenv("GOPATH")
+	goPath := os.Getenv(goPath)
 	if goPath == "" {
-		log.Fatal("GOPATH is nil")
+		log.Fatal(goPath, "can't is nil")
 	}
 
-	proxy := os.Getenv("GOPROXY")
+	proxy := os.Getenv(goProxy)
 	if proxy == "" {
-		os.Setenv("GORROXY", defProxy)
+		os.Setenv(goProxy, defProxy)
 	}
 	if cfgT.Proxy != "" {
-		os.Setenv("GORROXY", cfgT.Proxy)
+		os.Setenv(goProxy, cfgT.Proxy)
 	}
 
 	codeTotal := len(cfgT.Code)
@@ -50,9 +52,10 @@ func main() {
 			if err != nil {
 				log.Printf("get (%s), Err : %v\n", code, err)
 			}
-			log.Printf("get (%s) waiting ...\n", code)
 			err = cmd.Wait()
-			log.Printf("wait err (%s) : %v\n", code, err)
+			if err != nil {
+				log.Printf("wait err (%s) : %v\n", code, err)
+			}
 			wg.Done()
 		}(v)
 	}
