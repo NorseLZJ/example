@@ -19,13 +19,12 @@ func getContext(file string) ([]byte, error) {
 	return ioutil.ReadAll(fp)
 }
 
-func Marshal(file string) (*GetConfig, error) {
+func Marshal(file string, ret interface{}) error {
 	data, err := getContext(file)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	cfg := &GetConfig{}
-	err = json.Unmarshal(data, cfg)
-	return cfg, err
+	err = json.Unmarshal(data, ret)
+	return err
 }

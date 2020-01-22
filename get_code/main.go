@@ -19,7 +19,8 @@ const (
 )
 
 func main() {
-	cfgT, err := config.Marshal(*cfg)
+	cfgT := config.GetConfig{}
+	err := config.Marshal(*cfg, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}
