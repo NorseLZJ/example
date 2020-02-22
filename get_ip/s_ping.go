@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	cfg = flag.String("conf", "./mping.json", "mping config")
+	cfg = flag.String("conf", "./s_ping.json", "mping config")
 )
 
 type MPing struct {

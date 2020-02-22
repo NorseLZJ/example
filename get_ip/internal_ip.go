@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	cfg = flag.String("conf", "./active.json", "active ip config")
+	cfg = flag.String("conf", "./internal_ip.json", "active ip config")
 )
 
 type Active struct {
