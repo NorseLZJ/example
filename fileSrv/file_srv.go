@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 
 	"github.com/NorseLZJ/example/get_code/config"
@@ -19,8 +20,28 @@ type FileSrc struct {
 }
 
 func main() {
+	addrS, err := net.InterfaceAddrs()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	addrTmpS := make([]string, 0)
+
+	for _, v := range addrS {
+		if ipNet, ok := v.(*net.IPNet); ok &&
+			!ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
+			addrTmpS = append(addrTmpS, ipNet.IP.String())
+		}
+	}
+
+	fmt.Println("your computer ip")
+	for _, v := range addrTmpS {
+		fmt.Println(v)
+	}
+
+	fmt.Printf("\nstart server\n")
 	cfgT := &FileSrc{}
-	err := config.Marshal(*cfg, cfgT)
+	err = config.Marshal(*cfg, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}
