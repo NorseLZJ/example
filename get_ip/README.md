@@ -1,6 +1,11 @@
-### get_ip 
+#### 获得自己的ip地址 
+
+- m_ip.go 
+
+#### 探测局域网内别的存活的ip地址
+- internal_ip.go
+
+#### 给某个地址发送ping包
+- m_ping.go
 
 
-main.go 
-- get this computer ip not loopback
-- 获得自己电脑的ip地址除去(127.0.0.1) 
