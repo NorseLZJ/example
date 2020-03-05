@@ -7,11 +7,11 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/NorseLZJ/example/get_code/config"
+	"github.com/NorseLZJ/example/cfg_marshal"
 )
 
 var (
-	cfg = flag.String("conf", "./goGet.json", "go get file")
+	goGet = flag.String("conf", "./goGet.json", "go get file")
 )
 
 const (
@@ -21,8 +21,8 @@ const (
 )
 
 func main() {
-	cfgT := &config.GetConfig{}
-	err := config.Marshal(*cfg, cfgT)
+	cfgT := &cfg_marshal.GetConfig{}
+	err := cfg_marshal.Marshal(*goGet, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}

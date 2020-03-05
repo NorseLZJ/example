@@ -7,17 +7,12 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/NorseLZJ/example/get_code/config"
+	"github.com/NorseLZJ/example/cfg_marshal"
 )
 
 var (
-	cfg = flag.String("conf", "./share.json", "share Server Config")
+	share = flag.String("conf", "./share.json", "share Server Config")
 )
-
-type FileSrc struct {
-	ShareDir string `json:"share_dir"`
-	Addr     string `json:"addr"`
-}
 
 func main() {
 	addrS, err := net.InterfaceAddrs()
@@ -40,8 +35,8 @@ func main() {
 	}
 
 	fmt.Printf("\nstart server\n")
-	cfgT := &FileSrc{}
-	err = config.Marshal(*cfg, cfgT)
+	cfgT := &cfg_marshal.FileSrc{}
+	err = cfg_marshal.Marshal(*share, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}

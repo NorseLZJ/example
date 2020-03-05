@@ -7,23 +7,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/NorseLZJ/example/get_code/config"
+	"github.com/NorseLZJ/example/cfg_marshal"
 )
 
 var (
-	cfg = flag.String("conf", "./s_ping.json", "mping config")
+	sPing = flag.String("conf", "./s_ping.json", "mping config")
 )
 
-type MPing struct {
-	Frequency int    `json:"Frequency"`
-	Sleep     int    `json:"Sleep"`
-	Size      string `json:"Size"`
-	Addr      string `json:"Addr"`
-}
-
 func main() {
-	cfgT := &MPing{}
-	err := config.Marshal(*cfg, cfgT)
+	cfgT := &cfg_marshal.MPing{}
+	err := cfg_marshal.Marshal(*sPing, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}

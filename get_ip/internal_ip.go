@@ -7,22 +7,16 @@ import (
 	"os/exec"
 	"sync"
 
-	"github.com/NorseLZJ/example/get_code/config"
+	"github.com/NorseLZJ/example/cfg_marshal"
 )
 
 var (
-	cfg = flag.String("conf", "./internal_ip.json", "active ip config")
+	internalIp = flag.String("conf", "./internal_ip.json", "active ip config")
 )
 
-type Active struct {
-	Min      int    `json:"Min"`
-	Max      int    `json:"Max"`
-	BaseAddr string `json:"BaseAddr"`
-}
-
 func main() {
-	cfgT := &Active{}
-	err := config.Marshal(*cfg, cfgT)
+	cfgT := &cfg_marshal.Active{}
+	err := cfg_marshal.Marshal(*internalIp, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}

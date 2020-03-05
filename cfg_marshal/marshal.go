@@ -1,4 +1,4 @@
-package config
+package cfg_marshal
 
 import (
 	"encoding/json"
@@ -6,10 +6,6 @@ import (
 	"os"
 )
 
-type GetConfig struct {
-	Code  []string `json:"code"`
-	Proxy string   `json:"proxy"`
-}
 
 func getContext(file string) ([]byte, error) {
 	fp, err := os.Open(file)
