@@ -3,13 +3,14 @@
 
 #include <iostream>
 
-class People {
+class People
+{
 private:
   int age;
   std::string name;
 
 public:
-  People(std::string _name,int _age);
+  People(std::string _name, int _age);
   virtual ~People();
   void setname(std::string _name);
   void setage(int _age);
@@ -18,4 +19,4 @@ public:
   void print() { std::cout << "name:" << name << "age:" << age << std::endl; }
 };
 
-#endif 
+#endif

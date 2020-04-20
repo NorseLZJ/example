@@ -3,7 +3,8 @@
 
 #include <iostream>
 
-class Calc {
+class Calc
+{
 private:
   int baseMoney, maxYear;
   float baseRate, addRate;
