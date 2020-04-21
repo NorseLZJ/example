@@ -1,17 +1,36 @@
 #include "calc.h"
 
-Calc::Calc(int _baseMoney = 10000, int _maxYear = 10, float _baseRate = 0.1,
-           float _addRate = 0.1)
+Calc::Calc(int _initVal, int _year, std::vector<float> &_rate)
 {
-  baseMoney = _baseMoney;
-  maxYear = _maxYear;
-  baseRate = _baseRate;
-  addRate = _addRate;
+  initVal = _initVal;
+  year = _year;
+  rate = _rate;
 }
-void Calc::run() { std::cout << "runing..." << std::endl; }
-Calc::~Calc() { std::cout << "drop ..." << std::endl; }
+void Calc::run()
+{
+
+  int val = 0;
+  for (std::vector<float>::iterator it = rate.begin(); it != rate.end(); ++it)
+  {
+    val = initVal;
+    for (int cc = 1; cc <= year; ++cc)
+    {
+      val = val + (val * (*it));
+      ret[cc].push_back(val);
+    }
+  }
+}
 void Calc::print()
 {
-  std::cout << "baseMoney:" << baseMoney << "maxYear:" << maxYear
-            << "baseRate:" << baseRate << "addRate:" << addRate << std::endl;
+  for (int cc = 1; cc <= year; ++cc)
+  {
+    std::vector<int> group = ret[cc];
+    for (std::vector<int>::iterator it = group.begin(); it != group.end(); ++it)
+    {
+      std::cout << *it << "\t\t";
+    }
+    std::cout << std::endl;
+  }
 }
+
+Calc::~Calc() {}

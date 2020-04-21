@@ -2,15 +2,18 @@
 #define __CALC_H_
 
 #include <iostream>
+#include <vector>
+#include <map>
 
 class Calc
 {
 private:
-  int baseMoney, maxYear;
-  float baseRate, addRate;
+  int initVal, year;
+  std::vector<float> rate;
+  std::map<int, std::vector<int>> ret;
 
 public:
-  Calc(int _baseMoney, int _maxYear, float _baseRate, float _addRate);
+  Calc(int _initVal, int _year, std::vector<float> &_rate);
   void run();
   virtual ~Calc();
   void print();
