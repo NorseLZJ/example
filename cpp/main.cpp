@@ -28,9 +28,18 @@ int main()
   // mysql
   M_Mysql sql;
   int ret = sql.initMysqlConnPool("192.168.20.177", 6380, "lzj", "123456", "cpp_test");
-  if (ret != INIT_SUCCESS)
+  if (ret == INIT_SUCCESS)
   {
-    return ret;
+    printf("connect success ...\n");
   }
+  mysqlConn *conn = sql.fetchConnection();
+  char tsql[] = "CREATE TABLE ts_cpp;";
+  const char *psql = tsql;
+  ret = sql.executeSql(conn, psql);
+  if (ret == INIT_SUCCESS)
+  {
+    printf("exec success ...\n");
+  }
+
   return 0;
 }
