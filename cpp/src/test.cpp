@@ -60,6 +60,7 @@ void testMySQL()
   sqlS.push_back("INSERT into ban value (3,'lzj3');");
   sqlS.push_back("INSERT into ban value (4,'lzj4');");
   sqlS.push_back("INSERT into ban value (5,'lzj5');");
+  sqlS.push_back("SELECT * from ban;");
 
   MysqlConnectionPool *pool = new MysqlConnectionPool();
   int ret = 0;
