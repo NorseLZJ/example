@@ -1,8 +1,12 @@
 #include <iostream>
 #include <assert.h>
+#include <cstring>
+#include <string.h>
 #include "src/people.h"
 #include "src/calc.h"
 #include "src/mysql_connection_pool.h"
+
+char *toChar(std::string str);
 
 int main(int argc, char **argv)
 {
@@ -27,16 +31,17 @@ int main(int argc, char **argv)
   //c.print();
 
   // mysql
-  char str[] = "CREATE TABLE `ban` ( \
+  std::vector<std::string> sqlS;
+  sqlS.push_back(" \
+  CREATE TABLE `ban` ( \
   `userId` bigint NOT NULL COMMENT 'id', \
   `openId` varchar(60) NOT NULL DEFAULT '' COMMENT 'openId', \
-  PRIMARY KEY (`userId`) \
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-  //char str[] = "CREATE TABLE `ban` ( \
-  //`userId` bigint NOT NULL COMMENT 'id', \
-  //`openId` varchar(60) NOT NULL DEFAULT '' COMMENT 'openId', \
-  //PRIMARY KEY (`userId`) \
-  //) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+  PRIMARY KEY(`userId`))ENGINE = InnoDB DEFAULT CHARSET = utf8;");
+  sqlS.push_back("INSERT into ban value (1,'lzj1');");
+  sqlS.push_back("INSERT into ban value (2,'lzj2');");
+  sqlS.push_back("INSERT into ban value (3,'lzj3');");
+  sqlS.push_back("INSERT into ban value (4,'lzj4');");
+  sqlS.push_back("INSERT into ban value (5,'lzj5');");
 
   MysqlConnectionPool *pool = new MysqlConnectionPool();
   int ret = 0;
@@ -44,17 +49,19 @@ int main(int argc, char **argv)
   assert(ret == 0);
   ret = pool->openConnPool(10);
   assert(ret == 0);
-  int num = 1;
   MYSQL_RES *res_ptr;
   int i, j;
   MYSQL_ROW sqlrow;
-  while (num > 0)
+
+  for (std::vector<std::string>::iterator it = sqlS.begin(); it != sqlS.end(); ++it)
   {
-  mysqlConnection *mysqlConn = pool->fetchConnection();
-  assert(mysqlConn != NULL);
-  pool->executeSql(mysqlConn, str);
-  res_ptr = mysql_store_result(mysqlConn->sock);
-  if (res_ptr)
+    char *cstr = toChar(*it);
+    mysqlConnection *mysqlConn = pool->fetchConnection();
+    assert(mysqlConn != NULL);
+    assert(cstr != NULL);
+    pool->executeSql(mysqlConn, cstr);
+    res_ptr = mysql_store_result(mysqlConn->sock);
+    if (res_ptr)
     {
       printf("%lu Rows\n", (unsigned long)mysql_num_rows(res_ptr));
       j = mysql_num_fields(res_ptr);
@@ -71,9 +78,16 @@ int main(int argc, char **argv)
     }
     mysql_free_result(res_ptr);
     pool->recycleConnection(mysqlConn);
-    num--;
+    delete[] cstr;
   }
-  delete pool;
 
+  delete pool;
   return 0;
+}
+
+char *toChar(std::string str)
+{
+  char *cstr = new char[str.length() + 1];
+  std::strcpy(cstr, str.c_str());
+  return cstr;
 }
