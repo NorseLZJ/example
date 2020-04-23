@@ -5,6 +5,7 @@ obj = main.cpp \
 	src/people.cpp \
 	src/calc.cpp \
 	src/mysql_connection_pool.cpp \
+	src/test.cpp \
 
 run main:
 	$(CC) $(CFLAGS) $(obj) -o main 
