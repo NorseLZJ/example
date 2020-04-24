@@ -1,7 +1,7 @@
 #ifndef __PEOPLE_H_
 #define __PEOPLE_H_
 
-#include <iostream>
+#include "std.h"
 
 class People
 {

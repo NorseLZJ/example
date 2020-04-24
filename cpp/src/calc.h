@@ -1,9 +1,7 @@
 #ifndef __CALC_H_
 #define __CALC_H_
 
-#include <iostream>
-#include <vector>
-#include <map>
+#include "std.h"
 
 class Calc
 {

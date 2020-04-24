@@ -31,10 +31,7 @@
 #ifndef __MYSQL_CONNECTION_POOL_H
 #define __MYSQL_CONNECTION_POOL_H
 
-#include <mysql/mysql.h>
-#include <semaphore.h>
-#include <pthread.h>
-#include <deque>
+#include "std.h" 
 
 #define MAX_SQL_LEN             4096
 

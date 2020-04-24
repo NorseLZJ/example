@@ -1,6 +1,7 @@
 #include "people.h"
 
-People::People(std::string _name, int _age) {
+People::People(std::string _name, int _age)
+{
   name = _name;
   age = _age;
 }

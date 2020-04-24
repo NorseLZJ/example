@@ -1,6 +1,3 @@
-#include <assert.h>
-#include <cstring>
-#include <string.h>
 #include "people.h"
 #include "calc.h"
 #include "test.h"

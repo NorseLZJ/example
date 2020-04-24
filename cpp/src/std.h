@@ -1,5 +1,16 @@
+#include <iostream>
 #include <string.h>
 #include <cstring>
 #include <string>
-
-char *toChar(std::string str);
+#include <assert.h>
+#include <mysql/mysql.h>
+#include <semaphore.h>
+#include <pthread.h>
+#include <deque>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <time.h>
+#include <errno.h>
+#include <vector>
+#include <map>
