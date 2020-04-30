@@ -1,0 +1,12 @@
+{
+  "go.gopath": "~/go/",
+  "go.goroot": "/usr/local/go",
+  "go.bin": "~/go/bin",
+  "go.toolsGopath": "~/go/bin",
+  "telemetry.enableTelemetry": false,
+  "telemetry.enableCrashReporter": false,
+  "editor.minimap.enabled": true,
+  "files.trimTrailingWhitespace": true,
+  "go.inferGopath": true,
+  "go.lintTool": "golangci-lint"
+}

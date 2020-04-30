@@ -9,9 +9,6 @@ obj = main.cpp \
 	src/calc.cpp \
 	src/mysql_connection_pool.cpp \
 	src/test.cpp \
-	#src/redis_except.cpp \
-	#src/redis_pool.cpp \
-	#src/redis_cli.cpp \
 
 run main:
 	$(CC) $(CFLAGS) $(MYSQLFLAGS) $(obj) $(REDISFLAGS) -o main 

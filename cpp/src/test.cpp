@@ -104,43 +104,20 @@ void testMySQL()
 
 void testRedis(int argc, char **argv)
 {
-  unsigned int j, isunix = 0;
   redisContext *c;
   redisReply *reply;
-  const char *hostname = (argc > 1) ? argv[1] : "127.0.0.1";
-
-  if (argc > 2)
+  char host[] = "172.17.0.3";
+  int port = 6379;
+  c = redisConnect(host, port);
+  if (c == NULL)
   {
-    if (*argv[2] == 'u' || *argv[2] == 'U')
-    {
-      isunix = 1;
-      /* in this case, host is the path to the unix socket */
-      printf("Will connect to unix socket @%s\n", hostname);
-    }
+    printf("Connection is NULL\n");
+    exit(1);
   }
-
-  int port = (argc > 2) ? atoi(argv[2]) : 6380;
-
-  struct timeval timeout = {1, 500000}; // 1.5 seconds
-  if (isunix)
+  if (c->err)
   {
-    c = redisConnectUnixWithTimeout(hostname, timeout);
-  }
-  else
-  {
-    c = redisConnectWithTimeout(hostname, port, timeout);
-  }
-  if (c == NULL || c->err)
-  {
-    if (c)
-    {
-      printf("Connection error: %s\n", c->errstr);
-      redisFree(c);
-    }
-    else
-    {
-      printf("Connection error: can't allocate redis context\n");
-    }
+    printf("Connection is err : %s\n", c->errstr);
+    printf("Connection is err : %d\n", c->err);
     exit(1);
   }
 
@@ -175,26 +152,6 @@ void testRedis(int argc, char **argv)
   /* Create a list of numbers, from 0 to 9 */
   reply = (redisReply *)redisCommand(c, "DEL mylist");
   freeReplyObject(reply);
-  for (j = 0; j < 10; j++)
-  {
-    char buf[64];
-
-    snprintf(buf, 64, "%u", j);
-    reply = (redisReply *)redisCommand(c, "LPUSH mylist element-%s", buf);
-    freeReplyObject(reply);
-  }
-
-  /* Let's check what we have inside the list */
-  reply = (redisReply *)redisCommand(c, "LRANGE mylist 0 -1");
-  if (reply->type == REDIS_REPLY_ARRAY)
-  {
-    for (j = 0; j < reply->elements; j++)
-    {
-      printf("%u) %s\n", j, reply->element[j]->str);
-    }
-  }
-  freeReplyObject(reply);
-
   /* Disconnects and frees the context */
   redisFree(c);
 }
