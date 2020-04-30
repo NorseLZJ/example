@@ -5,3 +5,7 @@ all _all:
 exec _exec:
 	./jjson -f ./data_juhe.json 
 
+# run
+# jjson -f data_juhe.json
+# jjson -d ./tmp
+# jjson -d /home/lzj/norse/example/cmd/jjson/tmp
