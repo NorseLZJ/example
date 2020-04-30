@@ -53,7 +53,7 @@ func main() {
 		}
 		for _, f := range fs {
 			if !f.IsDir() && strings.HasSuffix(f.Name(), ".json") {
-				ffdir := fmt.Sprintf("%s%s", *dir, f.Name())
+				ffdir := fmt.Sprintf("%s/%s", *dir, f.Name())
 				err = jsonFormat(ffdir)
 				if err != nil {
 					log.Fatal(err)
