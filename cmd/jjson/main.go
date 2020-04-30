@@ -16,10 +16,30 @@ var (
 	dir = flag.String("d", "", "Absolute path")
 )
 
+var usage = func() {
+	printUsage(os.Stderr)
+	os.Exit(1)
+}
+
+func printUsage(w *os.File) {
+	fmt.Fprintf(w, "usage: jjson\n")
+	fmt.Fprintf(w, "jjson -f xxx.json\n")
+	fmt.Fprintf(w, "jjson -d xxx(dir)\n")
+}
+
 func main() {
+	if len(os.Args) > 1 && os.Args[1] == "--help" {
+		printUsage(os.Stdout)
+		os.Exit(0)
+	}
+	flag.Usage = usage
 	flag.Parse()
+	if flag.NArg() != 0 {
+		usage()
+	}
 	if "" == *org && "" == *dir {
-		log.Fatal("file is nil")
+		flag.Usage()
+		log.Fatal("file and dir is nil ")
 	}
 	var err error
 	if "" != *org {
