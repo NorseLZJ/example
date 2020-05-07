@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 var (
@@ -51,15 +52,31 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		files := make([]string, 0)
+		count := 0
 		for _, f := range fs {
 			if !f.IsDir() && strings.HasSuffix(f.Name(), ".json") {
-				ffdir := fmt.Sprintf("%s/%s", *dir, f.Name())
-				err = jsonFormat(ffdir)
+				val := fmt.Sprintf("%s/%s", *dir, f.Name())
+				files = append(files, val)
+				count++
+			}
+		}
+		wg := &sync.WaitGroup{}
+		wg.Add(count)
+		for _, file := range files {
+			if file == "" {
+				continue
+			}
+			go func(file string) {
+				fmt.Println(file)
+				err = jsonFormat(file)
 				if err != nil {
 					log.Fatal(err)
 				}
-			}
+				wg.Done()
+			}(file)
 		}
+		wg.Wait()
 	}
 }
 
