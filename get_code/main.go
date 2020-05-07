@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	goGet = flag.String("conf", "./goGet.json", "go get file")
+	goGet = flag.String("f", "./goGet.json", "go get file")
 )
 
 const (
@@ -21,6 +21,7 @@ const (
 )
 
 func main() {
+	flag.Parse()
 	cfgT := &cfg_marshal.GetConfig{}
 	err := cfg_marshal.Marshal(*goGet, cfgT)
 	if err != nil {

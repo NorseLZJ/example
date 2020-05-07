@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	sPing = flag.String("conf", "./s_ping.json", "mping config")
+	sPing = flag.String("f", "./s_ping.json", "mping config")
 )
 
 func main() {
+	flag.Parse()
 	cfgT := &cfg_marshal.MPing{}
 	err := cfg_marshal.Marshal(*sPing, cfgT)
 	if err != nil {

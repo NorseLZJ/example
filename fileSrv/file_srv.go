@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	share = flag.String("conf", "./share.json", "share Server Config")
+	share = flag.String("f", "./share.json", "cfg")
 )
 
 func main() {
+	flag.Parse()
 	addrS, err := net.InterfaceAddrs()
 	if err != nil {
 		log.Fatal(err)

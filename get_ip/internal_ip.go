@@ -11,10 +11,11 @@ import (
 )
 
 var (
-	internalIp = flag.String("conf", "./internal_ip.json", "active ip config")
+	internalIp = flag.String("f", "./internal_ip.json", "active ip config")
 )
 
 func main() {
+	flag.Parse()
 	cfgT := &cfg_marshal.Active{}
 	err := cfg_marshal.Marshal(*internalIp, cfgT)
 	if err != nil {
