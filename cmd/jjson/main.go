@@ -14,7 +14,7 @@ import (
 
 var (
 	org = flag.String("f", "", "file")
-	dir = flag.String("d", "", "Absolute path")
+	dir = flag.String("d", "", "path")
 )
 
 var usage = func() {
@@ -25,7 +25,7 @@ var usage = func() {
 func printUsage(w *os.File) {
 	fmt.Fprintf(w, "usage: jjson\n")
 	fmt.Fprintf(w, "jjson -f xxx.json\n")
-	fmt.Fprintf(w, "jjson -d xxx(dir)\n")
+	fmt.Fprintf(w, "jjson -d xxx(dir) cur dir or pwd dir\n")
 }
 
 func main() {
