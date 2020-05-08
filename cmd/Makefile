@@ -1,20 +1,28 @@
 export dir=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
+FLAGS=-ldflags='-w -s '
+CC=go build
+BIN=${GOBIN}
+
 fsv _fsv:
-	cd $(dir)fileserver
-	go build -ldflags='-w -s' && go install
-gcode _gcode:
-	cd $(dir)getcode
-	go build -ldflags='-w -s' && go install
-interip _interip:
-	cd $(dir)internalIp
-	go build -ldflags='-w -s' && go install
+	$(CC) $(FLAGS) -o $(BIN)/fileserver.exe ${dir}fileserver/main.go
+
+
+getCode _getCode:
+	$(CC) $(FLAGS) -o $(BIN)/getcode.exe ${dir}getcode/main.go
+
+
+internalIp _internalIp:
+	$(CC) $(FLAGS) -o $(BIN)/internalip.exe ${dir}internalip/main.go
+
+
 mip _mip:
-	cd $(dir)mip
-	go build -ldflags='-w -s' && go install
-jjson _jjson:
-	cd $(dir)jjson
-	go build -ldflags='-w -s' && go install
-pping _pping:
-	cd $(dir)pping
-	go build -ldflags='-w -s' && go install
+	$(CC) $(FLAGS) -o $(BIN)/mip.exe ${dir}mip/main.go
+
+
+jJson _jJson:
+	$(CC) $(FLAGS) -o $(BIN)/jjson.exe ${dir}jjson/main.go
+
+
+pPing _pPing:
+	$(CC) $(FLAGS) -o $(BIN)/pping.exe ${dir}pping/main.go
