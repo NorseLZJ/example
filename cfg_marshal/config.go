@@ -6,8 +6,9 @@ type GetConfig struct {
 }
 
 type FileSrc struct {
-	ShareDir string `json:"share_dir"`
-	Port     string `json:"port"`
+	ShareDir  string `json:"share_dir"`
+	UpLoadDir string `json:"up_load_dir"`
+	Port      string `json:"port"`
 }
 
 type Active struct {

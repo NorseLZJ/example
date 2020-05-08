@@ -14,12 +14,12 @@ import (
 
 var (
 	share = flag.String("f", "./share.json", "cfg")
+	cfgT  = &cfg_marshal.FileSrc{}
 )
 
 func main() {
 	flag.Parse()
 	fmt.Println("start server")
-	cfgT := &cfg_marshal.FileSrc{}
 	err := cfg_marshal.Marshal(*share, cfgT)
 	checkErr(err)
 	showIp(cfgT.Port)
@@ -40,10 +40,10 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>多平台局域网内文件互传</title>
+    <title>文件互传</title>
 </head>
 <body style="text-align: center;"> 
-    <h1>多平台局域网内文件互传</h1>
+    <h1>文件互传</h1>
     <br>
     <br>
     <form action="UploadFile.ashx" method="post" enctype="multipart/form-data">
@@ -66,15 +66,21 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer file.Close()
 		fileBytes, err := ioutil.ReadAll(file)
-		checkErr(err)
-		newFile, err := os.Create("/home/banapy/tmp/" + handler.Filename)
-		checkErr(err)
+		if err != nil {
+			log.Printf("err : %v", err)
+			return
+		}
+		newFile, err := os.Create(cfgT.UpLoadDir + handler.Filename)
+		if err != nil {
+			log.Printf("err : %v", err)
+			return
+		}
 		defer newFile.Close()
 		if _, err := newFile.Write(fileBytes); err != nil {
 			checkErr(err)
 			return
 		}
-		fmt.Println(" upload successfully:" + "/home/banapy/tmp/" + handler.Filename)
+		fmt.Println("upload successfully:" + cfgT.UpLoadDir + handler.Filename)
 		w.Write([]byte("SUCCESS"))
 	}
 }

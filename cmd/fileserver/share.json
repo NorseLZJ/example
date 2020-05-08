@@ -1,4 +1,5 @@
 {
-  "addr": ":8888",
-  "share_dir": "/home/rs/Public" 
+  "port": ":8888",
+  "share_dir": "D:\\lzj\\Public",
+  "up_load_dir": "D:\\lzj\\Public\\upload\\"
 }
