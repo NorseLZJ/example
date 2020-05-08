@@ -5,24 +5,14 @@ CC=go build
 BIN=${GOBIN}
 
 fsv _fsv:
-	$(CC) $(FLAGS) -o $(BIN)/fileserver.exe ${dir}fileserver/main.go
-
-
+	$(CC) $(FLAGS) -o $(BIN)/fileserver ${dir}fileserver/main.go
 getCode _getCode:
-	$(CC) $(FLAGS) -o $(BIN)/getcode.exe ${dir}getcode/main.go
-
-
+	$(CC) $(FLAGS) -o $(BIN)/getcode ${dir}getcode/main.go
 internalIp _internalIp:
-	$(CC) $(FLAGS) -o $(BIN)/internalip.exe ${dir}internalip/main.go
-
-
-mip _mip:
-	$(CC) $(FLAGS) -o $(BIN)/mip.exe ${dir}mip/main.go
-
-
+	$(CC) $(FLAGS) -o $(BIN)/internalip ${dir}internalip/main.go
+mIp _mIp:
+	$(CC) $(FLAGS) -o $(BIN)/mip ${dir}mip/main.go
 jJson _jJson:
-	$(CC) $(FLAGS) -o $(BIN)/jjson.exe ${dir}jjson/main.go
-
-
+	$(CC) $(FLAGS) -o $(BIN)/jjson ${dir}jjson/main.go
 pPing _pPing:
-	$(CC) $(FLAGS) -o $(BIN)/pping.exe ${dir}pping/main.go
+	$(CC) $(FLAGS) -o $(BIN)/pping ${dir}pping/main.go
