@@ -7,7 +7,7 @@ type GetConfig struct {
 
 type FileSrc struct {
 	ShareDir string `json:"share_dir"`
-	Addr     string `json:"addr"`
+	Port     string `json:"port"`
 }
 
 type Active struct {
