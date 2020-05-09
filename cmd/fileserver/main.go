@@ -97,6 +97,6 @@ func showIp(port string) {
 	}
 	fmt.Println("try access this address please")
 	for _, v := range addrTmpS {
-		fmt.Println(fmt.Sprintf("%s:%s", v, port))
+		fmt.Println(fmt.Sprintf("%s%s", v, port))
 	}
 }
