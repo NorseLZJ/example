@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/NorseLZJ/example/cfg_marshal"
+	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/NorseLZJ/example/cfg_marshal"
+	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
 var (
