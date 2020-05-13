@@ -19,7 +19,8 @@ type Selling struct {
 	UnitPrice  int    `gorm:"comment: '房子单价'"`
 	District   string `gorm:"varchar(64); comment:'所属行政区'"`
 	Region     string `gorm:"varchar(64); comment:'详细区域'"`
-	Area       int    `gorm:"comment:'面积'"`
+	Area       int    `gorm:"comment:'area'"`
+	City       string `gorm:"comment:'city'"`
 }
 
 type Sold struct {
@@ -31,6 +32,7 @@ type Sold struct {
 	SoldYear   string `gorm:"varchar(32)  ;comment: '交易年份'"`
 	SoldMonth  string `gorm:"varchar(32)  ;comment: '交易月份'"`
 	Area       int    `gorm:"comment:'面积'"`
+	City       string `gorm:"comment:'city'"`
 }
 
 func soldInfo(community string, page int) {
@@ -70,7 +72,9 @@ func soldInfo(community string, page int) {
 				District:   community,
 				SoldYear:   soldYear,
 				SoldMonth:  soldMonth,
-				Area:       area}
+				Area:       area,
+				City:       city,
+			}
 			err := db.Save(&sold).Error
 			std.PrintErr(err)
 		}
@@ -116,7 +120,9 @@ func sellingInfo(community string, page int) {
 				UnitPrice:  unitPrice,
 				District:   community,
 				Region:     region,
-				Area:       area}
+				Area:       area,
+				City:       city,
+			}
 			err := db.Save(&sell).Error
 			std.PrintErr(err)
 		}

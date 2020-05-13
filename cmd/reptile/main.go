@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,7 +24,8 @@ var (
 	soldUrl   string
 	sellUrl   string
 	userAgent string
-	district  = []string{"weiyang", "yanta"}
+	city      string
+	district  []string
 )
 
 const (
@@ -41,6 +43,10 @@ func checkCfg() {
 	sellUrl = cfgT.Url.SellUrl
 	soldUrl = cfgT.Url.SoldUrl
 	userAgent = cfgT.UserAgent
+	strs := strings.Split(sellUrl, "/")
+	city = strings.Split(strs[2], ".")[0]
+	district = make([]string, 0, len(cfgT.District))
+	district = append(district, cfgT.District[:]...)
 }
 
 func main() {

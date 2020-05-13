@@ -9,8 +9,9 @@
     "charset": "utf8"
   },
   "url": {
-    "sold_url" : "https://xa.lianjia.com/chengjiao/",
-    "sell_url" : "https://xa.lianjia.com/ershoufang/"
+    "sold_url" : "https://sh.lianjia.com/chengjiao/",
+    "sell_url" : "https://sh.lianjia.com/ershoufang/"
   },
-  "user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+  "user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+  "district": ["yangpu","pudong","putuo","jiading","songjiang","jingan","baoshan","xuhui"]
 }

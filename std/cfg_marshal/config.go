@@ -42,4 +42,6 @@ type Reptile struct {
 	} `json:"url"`
 	// userAgent
 	UserAgent string `json:"user_agent"`
+	// 区
+	District []string `json:"district"`
 }
