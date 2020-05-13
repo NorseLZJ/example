@@ -1,63 +1,106 @@
 package main
 
 import (
-	"bufio"
+	"errors"
+	"flag"
 	"fmt"
-	"io"
+	"sync"
+	"time"
 
-	"github.com/gpmgo/gopm/modules/log"
-
-	"github.com/gocolly/colly"
-
-	"golang.org/x/net/html/charset"
-	"golang.org/x/text/encoding"
+	"github.com/NorseLZJ/example/std"
+	"github.com/NorseLZJ/example/std/cfg_marshal"
+	"github.com/NorseLZJ/example/std/log"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 )
 
-func main() {
-	//llog := log2.LLog()
-	//resp, err := http.Get("http://www.zhenai.com/zhenghun") //获取页面返回的response
-	url := "https://xa.lianjia.com/ershoufang/"
-	//resp, err := http.Get(url)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	//defer resp.Body.Close()
-	//if resp.StatusCode != http.StatusOK {
-	//	log.Fatal("resp.StatusCode :%d", resp.StatusCode)
-	//}
-	//utf8Reader := transform.NewReader(resp.Body, coder(resp.Body).NewDecoder())
-	//all, err := ioutil.ReadAll(utf8Reader)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//fd, err := os.OpenFile("tmp.html", os.O_WRONLY|os.O_TRUNC, 0600)
-	//if err != nil {
-	//	panic(err)
-	//}
-	////fmt.Printf("%s", all)
-	//defer fd.Close()
-	//fd.Write(all)
+var (
+	share = flag.String("f", "./reptile.json", "cfg")
+	cfgT  = &cfg_marshal.Reptile{}
+	db    *gorm.DB
+	llog  *log.Log
 
-	// colly
-	c := colly.NewCollector()
-	// Find and visit all links
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		log.Info("%s", e.Name)
-		e.Request.Visit(e.Attr("href"))
-	})
+	soldUrl   string
+	sellUrl   string
+	userAgent string
+)
 
-	c.OnRequest(func(r *colly.Request) {
-		fmt.Println("Visiting", r.URL)
-	})
+const (
+	spaceTime = 1
+)
 
-	c.Visit(url)
+func init() {
+	llog = log.LLog()
 }
 
-func coder(r io.Reader) encoding.Encoding {
-	bytes, err := bufio.NewReader(r).Peek(1024)
-	if err != nil {
-		panic(err)
+func checkCfg() {
+	if cfgT.Url.SellUrl == "" || cfgT.Url.SoldUrl == "" {
+		std.CheckErr(errors.New("sell url or sold url is nil"))
 	}
-	e, _, _ := charset.DetermineEncoding(bytes, "")
-	return e
+	sellUrl = cfgT.Url.SellUrl
+	soldUrl = cfgT.Url.SoldUrl
+	userAgent = cfgT.UserAgent
+}
+
+func main() {
+	flag.Parse()
+	err := cfg_marshal.Marshal(*share, cfgT)
+	std.CheckErr(err)
+	checkCfg()
+	initDb()
+
+	defer func() {
+		db.Close()
+	}()
+
+	district := []string{"weiyang", "yanta"}
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+	go func() {
+		for _, val := range district {
+			total := sellingPage(val)
+			for page := 1; page < total; page++ {
+				wg.Add(1)
+				time.Sleep(time.Duration(spaceTime) * time.Second)
+				go func(page int) {
+					defer wg.Done()
+					sellingInfo(val, page)
+				}(page)
+			}
+		}
+	}()
+
+	go func() {
+		for _, val := range district {
+			total := soldPage(val)
+			for page := 1; page < total; page++ {
+				wg.Add(1)
+				time.Sleep(time.Duration(spaceTime) * time.Second)
+				go func(page int) {
+					defer wg.Done()
+					soldInfo(val, page)
+				}(page)
+			}
+		}
+	}()
+	wg.Wait()
+}
+
+func initDb() {
+	var err error
+	driverName := cfgT.SqlConfig.Driver
+	host := cfgT.SqlConfig.Host
+	port := cfgT.SqlConfig.Port
+	database := cfgT.SqlConfig.Db
+	username := cfgT.SqlConfig.User
+	password := cfgT.SqlConfig.Password
+	charset := cfgT.SqlConfig.Charset
+	args := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
+		username, password, host, port, database, charset)
+	db, err = gorm.Open(driverName, args)
+	std.CheckErr(err)
+	db = db.AutoMigrate(&Selling{}, &Sold{})
+	db.DB().SetMaxIdleConns(10)
+	db.DB().SetMaxOpenConns(20)
 }

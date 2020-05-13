@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/NorseLZJ/example/std"
 	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
@@ -21,17 +22,11 @@ func main() {
 	flag.Parse()
 	fmt.Println("start server")
 	err := cfg_marshal.Marshal(*share, cfgT)
-	checkErr(err)
+	std.CheckErr(err)
 	showIp(cfgT.Port)
 	http.HandleFunc("/", uploadFileHandler)
 	http.Handle("/file", http.StripPrefix("/file", http.FileServer(http.Dir(cfgT.ShareDir))))
 	log.Fatal(http.ListenAndServe(cfgT.Port, nil))
-}
-
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -77,8 +72,7 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		defer newFile.Close()
 		if _, err := newFile.Write(fileBytes); err != nil {
-			checkErr(err)
-			return
+			std.CheckErr(err)
 		}
 		fmt.Println("upload successfully:" + cfgT.UpLoadDir + handler.Filename)
 		w.Write([]byte("SUCCESS"))
@@ -87,7 +81,7 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 
 func showIp(port string) {
 	addrS, err := net.InterfaceAddrs()
-	checkErr(err)
+	std.CheckErr(err)
 	addrTmpS := make([]string, 0)
 	for _, v := range addrS {
 		if ipNet, ok := v.(*net.IPNet); ok &&

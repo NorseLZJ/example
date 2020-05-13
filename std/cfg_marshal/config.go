@@ -23,3 +23,23 @@ type MPing struct {
 	Size      string `json:"Size"`
 	Addr      string `json:"Addr"`
 }
+
+type Reptile struct {
+	// sql
+	SqlConfig struct {
+		Driver   string `json:"driver"`
+		Host     string `json:"host"`
+		Port     string `json:"port"`
+		Db       string `json:"db"`
+		User     string `json:"user"`
+		Password string `json:"password"`
+		Charset  string `json:"charset"`
+	} `json:"sqlConfig"`
+	// url
+	Url struct {
+		SoldUrl string `json:"sold_url"`
+		SellUrl string `json:"sell_url"`
+	} `json:"url"`
+	// userAgent
+	UserAgent string `json:"user_agent"`
+}
