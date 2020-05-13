@@ -23,6 +23,7 @@ var (
 	soldUrl   string
 	sellUrl   string
 	userAgent string
+	district  = []string{"weiyang", "yanta"}
 )
 
 const (
@@ -52,39 +53,38 @@ func main() {
 	defer func() {
 		db.Close()
 	}()
-
-	district := []string{"weiyang", "yanta"}
-	var wg sync.WaitGroup
-
-	wg.Add(2)
-	go func() {
-		for _, val := range district {
-			total := sellingPage(val)
-			for page := 1; page < total; page++ {
-				wg.Add(1)
-				time.Sleep(time.Duration(spaceTime) * time.Second)
-				go func(page int) {
-					defer wg.Done()
-					sellingInfo(val, page)
-				}(page)
-			}
-		}
-	}()
-
-	go func() {
-		for _, val := range district {
-			total := soldPage(val)
-			for page := 1; page < total; page++ {
-				wg.Add(1)
-				time.Sleep(time.Duration(spaceTime) * time.Second)
-				go func(page int) {
-					defer wg.Done()
-					soldInfo(val, page)
-				}(page)
-			}
-		}
-	}()
+	wg := &sync.WaitGroup{}
+	sell(wg)
+	sold(wg)
 	wg.Wait()
+}
+
+func sell(wg *sync.WaitGroup) {
+	for _, val := range district {
+		total := sellingPage(val)
+		for page := 1; page < total; page++ {
+			wg.Add(1)
+			time.Sleep(time.Duration(spaceTime) * time.Second)
+			go func(page int) {
+				defer wg.Done()
+				sellingInfo(val, page)
+			}(page)
+		}
+	}
+}
+
+func sold(wg *sync.WaitGroup) {
+	for _, val := range district {
+		total := soldPage(val)
+		for page := 1; page < total; page++ {
+			wg.Add(1)
+			time.Sleep(time.Duration(spaceTime) * time.Second)
+			go func(page int) {
+				defer wg.Done()
+				soldInfo(val, page)
+			}(page)
+		}
+	}
 }
 
 func initDb() {
