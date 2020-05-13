@@ -9,3 +9,12 @@ out
 gen
 get_code.code-workspace
 *.run
+
+.vscode
+cmd/fileserver/fileserver
+cmd/jjson/jjson
+cmd/getcode/getcode
+cmd/internalip/internalip
+cmd/mip/mip
+cmd/pping/pping
+cmd/reptile/reptile
