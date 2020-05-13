@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
@@ -31,8 +32,8 @@ func main() {
 			log.Fatal(err)
 		}
 		for _, f := range fs {
-			if !f.IsDir() {
-				ffdir := fmt.Sprintf("%s/%s", *dir, f.Name())
+			if !f.IsDir() && strings.HasSuffix(f.Name(), ".json") {
+				ffdir := fmt.Sprintf("%s%s", *dir, f.Name())
 				err = jsonFormat(ffdir)
 				if err != nil {
 					log.Fatal(err)
