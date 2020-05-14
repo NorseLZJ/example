@@ -6,4 +6,4 @@ BIN=${GOBIN}
 
 run _run:
 	#$(CC) $(FLAGS) -o $(BIN)/reptile
-	$(CC) $(FLAGS) -o reptile.exe
+	$(CC) $(FLAGS) -o reptile
