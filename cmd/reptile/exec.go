@@ -13,26 +13,28 @@ import (
 )
 
 type Selling struct {
-	Id         string `gorm:"varchar(64) ;primary_key ;comment: '房子id'"`
-	Name       string `gorm:"varchar(64);comment:'小区名称'"`
-	TotalPrice int    `gorm:"comment: '房子总价'"`
-	UnitPrice  int    `gorm:"comment: '房子单价'"`
-	District   string `gorm:"varchar(64); comment:'所属行政区'"`
-	Region     string `gorm:"varchar(64); comment:'详细区域'"`
-	Area       int    `gorm:"comment:'area'"`
-	City       string `gorm:"comment:'city'"`
+	Id         string    `gorm:"varchar(64) ;primary_key ;comment: '房子id'"`
+	Name       string    `gorm:"varchar(64);comment:'小区名称'"`
+	TotalPrice int       `gorm:"comment: '房子总价'"`
+	UnitPrice  int       `gorm:"comment: '房子单价'"`
+	District   string    `gorm:"varchar(64); comment:'所属行政区'"`
+	Region     string    `gorm:"varchar(64); comment:'详细区域'"`
+	Area       int       `gorm:"comment:'area'"`
+	City       string    `gorm:"comment:'city'"`
+	CreateTime time.Time `gorm:"comment:'createTime'"`
 }
 
 type Sold struct {
-	Id         string `gorm:"varchar(64) ;primary_key ;comment: '房子id'"`
-	Name       string `gorm:"varchar(64);comment:'小区名称'"`
-	TotalPrice int    `gorm:"comment: '房子总价'"`
-	UnitPrice  int    `gorm:"comment: '房子单价'"`
-	District   string `gorm:"varchar(64); comment:'所属行政区'"`
-	SoldYear   string `gorm:"varchar(32)  ;comment: '交易年份'"`
-	SoldMonth  string `gorm:"varchar(32)  ;comment: '交易月份'"`
-	Area       int    `gorm:"comment:'面积'"`
-	City       string `gorm:"comment:'city'"`
+	Id         string    `gorm:"varchar(64) ;primary_key ;comment: '房子id'"`
+	Name       string    `gorm:"varchar(64);comment:'小区名称'"`
+	TotalPrice int       `gorm:"comment: '房子总价'"`
+	UnitPrice  int       `gorm:"comment: '房子单价'"`
+	District   string    `gorm:"varchar(64); comment:'所属行政区'"`
+	SoldYear   string    `gorm:"varchar(32)  ;comment: '交易年份'"`
+	SoldMonth  string    `gorm:"varchar(32)  ;comment: '交易月份'"`
+	Area       int       `gorm:"comment:'面积'"`
+	City       string    `gorm:"comment:'city'"`
+	CreateTime time.Time `gorm:"comment:'createTime'"`
 }
 
 func soldInfo(community string, page int) {
@@ -64,7 +66,7 @@ func soldInfo(community string, page int) {
 		soldYear := strings.Split(dealDate, ".")[0]
 		soldMonth := strings.Split(dealDate, ".")[1]
 		if houseId != "" {
-			sold := Sold{
+			val := &Sold{
 				Id:         houseId,
 				Name:       name,
 				TotalPrice: totalPrice,
@@ -74,8 +76,9 @@ func soldInfo(community string, page int) {
 				SoldMonth:  soldMonth,
 				Area:       area,
 				City:       city,
+				CreateTime: createTime,
 			}
-			err := db.Save(&sold).Error
+			err := db.Save(val).Error
 			std.PrintErr(err)
 		}
 	})
@@ -113,7 +116,7 @@ func sellingInfo(community string, page int) {
 		unitPrice, _ := strconv.Atoi(string(re.Find([]byte(e.DOM.Find(".info .priceInfo .unitPrice span").Eq(0).Text()))))
 		area, _ := strconv.Atoi(string(re.Find([]byte(strings.Split(e.ChildText("div.info > div.address > div.houseInfo "), " | ")[1]))))
 		if houseId != "" {
-			sell := Selling{
+			val := &Selling{
 				Id:         houseId,
 				Name:       name,
 				TotalPrice: totalPrice,
@@ -122,8 +125,9 @@ func sellingInfo(community string, page int) {
 				Region:     region,
 				Area:       area,
 				City:       city,
+				CreateTime: createTime,
 			}
-			err := db.Save(&sell).Error
+			err := db.Save(val).Error
 			std.PrintErr(err)
 		}
 	})

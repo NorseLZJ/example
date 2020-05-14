@@ -21,11 +21,12 @@ var (
 	db    *gorm.DB
 	llog  *log.Log
 
-	soldUrl   string
-	sellUrl   string
-	userAgent string
-	city      string
-	district  []string
+	soldUrl    string
+	sellUrl    string
+	userAgent  string
+	city       string
+	district   []string
+	createTime = time.Now()
 )
 
 const (
