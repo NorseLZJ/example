@@ -1,12 +1,11 @@
 {
-    "telemetry.enableTelemetry": false,
-    "telemetry.enableCrashReporter": false,
-    "editor.minimap.enabled": true,
-    "files.trimTrailingWhitespace": true,
-    "go.inferGopath": true,
-    "go.gopath": "$GOPATH",
-    "go.toolsGopath": "$GOBIN",
-    "go.goroot": "$GOROOT",
-    "go.lintTool": "golangci-lint",
-    "go.useLanguageServer": true
+    "go.autocompleteUnimportedPackages": true,
+    "go.gocodePackageLookupMode": "go",
+    "go.gotoSymbol.includeImports": true,
+    "go.useCodeSnippetsOnFunctionSuggest": true,
+    "go.inferGopath": false,
+    "go.gopath": "~/go",
+    "go.goroot": "/usr/local/go",
+    "go.toolsGopath": "~/go/bin",
+    "go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 }
