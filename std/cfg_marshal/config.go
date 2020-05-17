@@ -45,3 +45,15 @@ type Reptile struct {
 	// 区
 	District []string `json:"district"`
 }
+
+type SendMail struct {
+	ToUserS []string `json:"toUserS"`
+	Title   string   `json:"title"`
+	Body    string   `json:"body"`
+	Your    struct {
+		User     string `json:"user"`
+		PassWord string `json:"passWord"`
+		Host     string `json:"host"`
+		Port     int    `json:"port"`
+	} `json:"your"`
+}

@@ -1,0 +1,14 @@
+{
+  "toUserS": [
+    "18841685054@163.com",
+    "liuzijian@gmail.com"
+  ],
+  "title": "test",
+  "body": "just test",
+  "your": {
+    "user": "liuzijian@dongmengwl.com",
+    "password": "www19561007",
+    "host": "smtp.com",
+    "port":465
+  }
+}
