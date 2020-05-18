@@ -3,6 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"flag"
+	"fmt"
+	"time"
 
 	"github.com/NorseLZJ/example/std"
 	"github.com/NorseLZJ/example/std/cfg_marshal"
@@ -31,11 +33,12 @@ func main() {
 }
 
 func genMail() []*gomail.Message {
+	now := time.Now()
 	msgs := make([]*gomail.Message, 0, len(cft.To))
 	title := cft.Title
-	body := cft.Body
 	file := cft.File
 	from := cft.From
+	body := fmt.Sprintf("%s<br><br> FROM: %s <br> DATE: %s", cft.Body, from, now.Format("2006-01-02 15:04:05"))
 	for _, to := range cft.To {
 		m := gomail.NewMessage()
 		m.SetHeader("From", from)
