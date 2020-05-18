@@ -47,13 +47,12 @@ type Reptile struct {
 }
 
 type SendMail struct {
-	ToUserS []string `json:"toUserS"`
-	Title   string   `json:"title"`
-	Body    string   `json:"body"`
-	Your    struct {
-		User     string `json:"user"`
-		PassWord string `json:"passWord"`
-		Host     string `json:"host"`
-		Port     int    `json:"port"`
-	} `json:"your"`
+	From     string   `json:"from"`
+	PassWord string   `json:"passWord"`
+	To       []string `json:"to"`
+	Host     string   `json:"host"` // 服务器地址 腾讯企业邮箱:smtp.exmail.qq.com
+	Port     int      `json:"port"` // 服务器端口 腾讯企业邮箱:465
+	Title    string   `json:"title"`
+	Body     string   `json:"body"`
+	File     string   `json:"file"`
 }

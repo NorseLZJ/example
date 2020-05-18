@@ -5,4 +5,5 @@ CC=go build
 BIN=${GOBIN}
 
 run _run:
-	$(CC) $(FLAGS) -o mail.exe
+	$(CC) $(FLAGS) -o $(BIN)/mail.exe
+	#$(CC) $(FLAGS) -o mail.exe

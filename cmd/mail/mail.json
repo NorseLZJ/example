@@ -1,14 +1,13 @@
 {
-  "toUserS": [
-    "18841685054@163.com",
-    "liuzijian@gmail.com"
+  "from": "xxx",
+  "password": "xxx",
+  "to": [
+    "xxx",
+    "xxx"
   ],
-  "title": "test",
-  "body": "just test",
-  "your": {
-    "user": "liuzijian@dongmengwl.com",
-    "password": "www19561007",
-    "host": "smtp.com",
-    "port":465
-  }
+  "title": "xxx",
+  "body": "xxx",
+  "host": "smtp.exmail.qq.com",
+  "port": 465,
+  "file": "xxx"
 }

@@ -1,48 +1,50 @@
 package main
 
 import (
+	"crypto/tls"
 	"flag"
-	"fmt"
 
 	"github.com/NorseLZJ/example/std"
 	"github.com/NorseLZJ/example/std/cfg_marshal"
-	"github.com/astaxie/beego/utils"
-)
-
-const (
-	cc = `{
-"username":"%s",
-"password":"%s",
-"host":"%s",
-"port":%d
-}`
+	"gopkg.in/gomail.v2"
 )
 
 var (
-	cf   = flag.String("f", "./mail.json", "cfg")
-	cfgT = &cfg_marshal.SendMail{}
+	cf  = flag.String("f", "./mail.json", "cfg")
+	cft = &cfg_marshal.SendMail{}
 )
 
 func main() {
 	flag.Parse()
-	err := cfg_marshal.Marshal(*cf, cfgT)
+	err := cfg_marshal.Marshal(*cf, cft)
 	std.CheckErr(err)
-	sendMail()
+	userName := cft.From
+	passWord := cft.PassWord
+	host := cft.Host
+	port := cft.Port
+
+	d := gomail.NewDialer(host, port, userName, passWord)
+	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+	if err := d.DialAndSend(genMail()...); err != nil {
+		std.PrintErr(err)
+	}
 }
 
-func sendMail() {
-	userName := cfgT.Your.User
-	passWord := cfgT.Your.PassWord
-	host := cfgT.Your.Host
-	port := cfgT.Your.Port
-	ccc := fmt.Sprintf(cc, userName, passWord, host, port)
-	mail := utils.NewEMail(ccc)
-	mail.To = make([]string, 0, len(cfgT.ToUserS))
-	mail.To = append(mail.To, cfgT.ToUserS[:]...)
-	mail.From = userName
-	mail.Subject = cfgT.Title
-	mail.Text = cfgT.Body
-	//mail.HTML = "<h1>Fancy Html is supported, too!</h1>"
-	mail.AttachFile("")
-	mail.Send()
+func genMail() []*gomail.Message {
+	msgs := make([]*gomail.Message, 0, len(cft.To))
+	title := cft.Title
+	body := cft.Body
+	file := cft.File
+	from := cft.From
+	for _, to := range cft.To {
+		m := gomail.NewMessage()
+		m.SetHeader("From", from)
+		m.SetHeader("To", to)
+		//m.SetAddressHeader("", "dan@example.com", "Dan")
+		m.SetHeader("Subject", title)
+		m.SetBody("text/html", body)
+		m.Attach(file)
+		msgs = append(msgs, m)
+	}
+	return msgs
 }
