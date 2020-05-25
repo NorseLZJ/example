@@ -12,8 +12,9 @@ import (
 )
 
 var (
-	cf  = flag.String("f", "./mail.json", "cfg")
-	cft = &cfg_marshal.SendMail{}
+	cf      = flag.String("f", "./mail.json", "cfg")
+	cft     = &cfg_marshal.SendMail{}
+	timeStr = time.Now().Format("2006-01-02")
 )
 
 func main() {
@@ -33,20 +34,16 @@ func main() {
 }
 
 func genMail() []*gomail.Message {
-	now := time.Now()
 	msgs := make([]*gomail.Message, 0, len(cft.To))
-	title := cft.Title
-	file := cft.File
-	from := cft.From
-	body := fmt.Sprintf("%s<br><br> FROM: %s <br> DATE: %s", cft.Body, from, now.Format("2006-01-02 15:04:05"))
+	body := fmt.Sprintf("%s<br><br> From : %s <br> Date : %s", cft.Body, cft.From, timeStr)
 	for _, to := range cft.To {
 		m := gomail.NewMessage()
-		m.SetHeader("From", from)
+		m.SetHeader("From", cft.From)
 		m.SetHeader("To", to)
 		//m.SetAddressHeader("", "dan@example.com", "Dan")
-		m.SetHeader("Subject", title)
+		m.SetHeader("Subject", cft.Title)
 		m.SetBody("text/html", body)
-		m.Attach(file)
+		m.Attach(cft.File)
 		msgs = append(msgs, m)
 	}
 	return msgs
