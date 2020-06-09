@@ -10,23 +10,24 @@ import (
 	"os"
 
 	"github.com/NorseLZJ/example/std"
-	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
 var (
-	share = flag.String("f", "./share.json", "cfg")
-	cfgT  = &cfg_marshal.FileSrc{}
+	port   = flag.String("p", ":18000", "server port")
+	share  = flag.String("s", "", "public dir")
+	upload = flag.String("u", "", "upload dir")
 )
 
 func main() {
 	flag.Parse()
+	if *share == "" {
+		log.Fatal("share dir is nil")
+	}
 	fmt.Println("start server")
-	err := cfg_marshal.Marshal(*share, cfgT)
-	std.CheckErr(err)
-	showIp(cfgT.Port)
-	http.HandleFunc("/", uploadFileHandler)
-	http.Handle("/file", http.StripPrefix("/file", http.FileServer(http.Dir(cfgT.ShareDir))))
-	log.Fatal(http.ListenAndServe(cfgT.Port, nil))
+	showIp(*port)
+	//http.HandleFunc("/", uploadFileHandler)
+	//http.Handle("/file", http.StripPrefix("/file", http.FileServer(http.Dir(cfgT.ShareDir))))
+	http.ListenAndServe(*port, http.FileServer(http.Dir(*share)))
 }
 
 func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
@@ -65,7 +66,7 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("err : %v", err)
 			return
 		}
-		newFile, err := os.Create(cfgT.UpLoadDir + handler.Filename)
+		newFile, err := os.Create(*upload + handler.Filename)
 		if err != nil {
 			log.Printf("err : %v", err)
 			return
@@ -74,7 +75,7 @@ func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
 		if _, err := newFile.Write(fileBytes); err != nil {
 			std.CheckErr(err)
 		}
-		fmt.Println("upload successfully:" + cfgT.UpLoadDir + handler.Filename)
+		fmt.Println("upload successfully:" + *upload + handler.Filename)
 		w.Write([]byte("SUCCESS"))
 	}
 }
