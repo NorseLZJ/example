@@ -20,3 +20,13 @@ cmd/pping/pping
 cmd/reptile/reptile
 cmd/reptile/reptile.exe
 cmd/mail/mail.exe
+
+docker/nsq/nsq/nsq_stat
+docker/nsq/nsq/nsq_tail
+docker/nsq/nsq/nsq_to_file
+docker/nsq/nsq/nsq_to_http
+docker/nsq/nsq/nsq_to_nsq
+docker/nsq/nsq/nsqadmin
+docker/nsq/nsq/nsqd
+docker/nsq/nsq/nsqlookupd
+docker/nsq/nsq/to_nsq
