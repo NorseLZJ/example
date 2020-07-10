@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"runtime"
+	"strings"
 
 	"github.com/NorseLZJ/example/std"
 )
@@ -18,7 +20,6 @@ var (
 
 const (
 	shareWindows = "D:\\share"
-	shareLinux   = "~/share/"
 	windows      = `windows`
 	linux        = `linux`
 )
@@ -41,7 +42,6 @@ func main() {
 	flag.Usage = func() {
 		fmt.Printf("%s\n", cc)
 	}
-
 	if *help {
 		flag.Usage()
 		return
@@ -51,7 +51,14 @@ func main() {
 	case windows:
 		share = shareWindows
 	case linux:
-		share = shareLinux
+		path, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		strs := strings.Split(path, "/")
+		cpStr := strings.Join(strs[0:3], "/")
+		cpStr += "/share"
+		share = cpStr
 	default:
 		log.Fatal("share dir is nil")
 	}
