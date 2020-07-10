@@ -17,7 +17,7 @@ var (
 )
 
 const (
-	shareWindows = "D:\\share\\"
+	shareWindows = "D:\\share"
 	shareLinux   = "~/share/"
 	windows      = `windows`
 	linux        = `linux`
@@ -57,11 +57,9 @@ func main() {
 	}
 
 	fmt.Println("start server")
-	*port = fmt.Sprintf(":%s", *port)
-	showIp(*port)
-	//http.HandleFunc("/", uploadFileHandler)
-	//http.Handle("/file", http.StripPrefix("/file", http.FileServer(http.Dir(cfgT.ShareDir))))
-	err := http.ListenAndServe(*port, http.FileServer(http.Dir(share)))
+	cpPort := fmt.Sprintf(":%s", *port)
+	showIp(cpPort)
+	err := http.ListenAndServe(cpPort, http.FileServer(http.Dir(share)))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -82,53 +80,3 @@ func showIp(port string) {
 		fmt.Println(fmt.Sprintf("%s%s", v, port))
 	}
 }
-
-//func uploadFileHandler(w http.ResponseWriter, r *http.Request) {
-//	fmt.Fprintln(w, `
-//<!DOCTYPE html>
-//<html lang="en">
-//<head>
-//    <meta charset="UTF-8">
-//    <title>文件互传</title>
-//</head>
-//<body style="text-align: center;">
-//    <h1>文件互传</h1>
-//    <br>
-//    <br>
-//    <form action="UploadFile.ashx" method="post" enctype="multipart/form-data">
-//    <input type="file" name="fileUpload" />
-//    <input type="submit" name="上传文件">
-//    </form>
-//        <br>
-//    <br>
-//        <br>
-//    <br>
-//    <a href="/file">文件下载</a>
-//</body>
-//</html>
-//        `)
-//	if r.Method == "POST" {
-//		file, handler, err := r.FormFile("fileUpload") //name的字段
-//		if err != nil {
-//			fmt.Println(err)
-//			return
-//		}
-//		defer file.Close()
-//		fileBytes, err := ioutil.ReadAll(file)
-//		if err != nil {
-//			log.Printf("err : %v", err)
-//			return
-//		}
-//		newFile, err := os.Create(*upload + handler.Filename)
-//		if err != nil {
-//			log.Printf("err : %v", err)
-//			return
-//		}
-//		defer newFile.Close()
-//		if _, err := newFile.Write(fileBytes); err != nil {
-//			std.CheckErr(err)
-//		}
-//		fmt.Println("upload successfully:" + *upload + handler.Filename)
-//		w.Write([]byte("SUCCESS"))
-//	}
-//}

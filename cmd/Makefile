@@ -1,11 +1,11 @@
 export dir=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-FLAGS=-ldflags='-w -s '
+FLAGS=-ldflags='-w -s ' -x
 CC=go build 
 OUTDIR=$(GOBIN)
 
 fsv _fsv:
-	$(CC) $(FLAGS) -o $(OUTDIR)/fsv $(dir)fileserver
+	$(CC) $(FLAGS) -o $(OUTDIR)/fsv.exe $(dir)fileserver
 	# fsv -s ~/std/
 
 fjson _fjson:
