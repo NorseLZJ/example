@@ -5,7 +5,7 @@ CC=go build
 OUTDIR=$(GOBIN)
 
 fsv _fsv:
-	$(CC) $(FLAGS) -o $(OUTDIR)/fsv.exe $(dir)fileserver
+	$(CC) $(FLAGS) -o $(OUTDIR)/fsv $(dir)fileserver
 	# fsv -s ~/std/
 
 fjson _fjson:
