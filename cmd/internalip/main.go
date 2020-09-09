@@ -4,54 +4,82 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os/exec"
+	"strings"
 	"sync"
-
-	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
-var (
-	internalIp = flag.String("f", "./internal_ip.json", "active ip config")
+const (
+	min = 1
+	max = 256
 )
 
 func main() {
 	flag.Parse()
-	cfgT := &cfg_marshal.Active{}
-	err := cfg_marshal.Marshal(*internalIp, cfgT)
+	activeIp := make(map[int][]string, 0)
+	wg := sync.WaitGroup{}
+	ipList := internalIp()
+	maybeIp := maybeActiveIp(ipList)
+	for idx, ippList := range maybeIp {
+		activeIp[idx] = []string{}
+		for _, ip := range ippList {
+			wg.Add(1)
+			go func(ip string, idx int) {
+				defer wg.Done()
+				cmd := exec.Command("ping", "-c", "1", ip)
+				err := cmd.Start()
+				if err != nil {
+					return
+				}
+				err = cmd.Wait()
+				if err != nil {
+					return
+				}
+				activeIp[idx] = append(activeIp[idx], ip)
+			}(ip, idx)
+		}
+	}
+	fmt.Println("wiat .......")
+	wg.Wait()
+	fmt.Println("Internal ActiveIp")
+	for idx, ll := range activeIp {
+		if len(ll) <= 0 {
+			continue
+		}
+		fmt.Printf("ipGroup:%d\n", idx)
+		for _, ip := range ll {
+			fmt.Printf("%s\n", ip)
+		}
+		fmt.Println()
+	}
+}
+
+func maybeActiveIp(bIp []string) map[int][]string {
+	ret := make(map[int][]string)
+	for idx, ipp := range bIp {
+		ret[idx] = []string{}
+		for i := min; i < max; i++ {
+			vv := fmt.Sprintf("%s.%d", ipp, i)
+			ret[idx] = append(ret[idx], vv)
+		}
+	}
+	return ret
+}
+
+func internalIp() []string {
+	addrS, err := net.InterfaceAddrs()
 	if err != nil {
 		log.Fatal(err)
 	}
-	ipList := make([]string, 0, cfgT.Max-cfgT.Min)
-	for i := cfgT.Min; i < cfgT.Max; i++ {
-		ipList = append(ipList, fmt.Sprintf("%s.%d", cfgT.BaseAddr, i))
+	addrTmpS := make([]string, 0)
+	for _, v := range addrS {
+		if ipNet, ok := v.(*net.IPNet); ok && !ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
+			cpIp := ipNet.IP.String()
+			ipSlice := strings.Split(cpIp, ".")[:3]
+			aip := fmt.Sprintf("%s.%s.%s", ipSlice[0], ipSlice[1], ipSlice[2])
+			addrTmpS = append(addrTmpS, aip)
+		}
 	}
-
-	activeIp := make([]string, 0)
-
-	wg := sync.WaitGroup{}
-	wg.Add(cfgT.Max - cfgT.Min)
-	for _, v := range ipList {
-		go func(ip string) {
-			defer wg.Done()
-			cmd := exec.Command("ping", "-c", "1", ip)
-			err := cmd.Start()
-			if err != nil {
-				//log.Println("Start cmd ", err)
-				return
-			}
-			err = cmd.Wait()
-			if err != nil {
-				//log.Println("Wait cmd ", err)
-				return
-			}
-			activeIp = append(activeIp, ip)
-		}(v)
-	}
-
-	wg.Wait()
-
-	fmt.Println("ActiveIp -------")
-	for _, ip := range activeIp {
-		fmt.Println(ip)
-	}
+	return addrTmpS
 }

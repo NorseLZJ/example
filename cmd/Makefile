@@ -24,3 +24,6 @@ mip _mip:
 pp _pp:
 	$(CC) $(FLAGS) -o $(OUTDIR)/pp $(dir)pping
 	# pping -f xxx.json
+
+interip _interip:
+	$(CC) $(FLAGS) -o $(OUTDIR)/interip $(dir)internalip

@@ -6,6 +6,6 @@
     "go.inferGopath": true,
     "go.gopath": "~/go",
     "go.goroot": "/usr/local/go",
-    "go.toolsGopath": "~/go/bin",
+    "go.toolsGopath": "~/go",
     "go.useCodeSnippetsOnFunctionSuggestWithoutType": true,
 }
