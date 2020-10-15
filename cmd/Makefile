@@ -1,29 +1,25 @@
 export dir=$(dir $(realpath $(firstword $(MAKEFILE_LIST))))
 
-FLAGS=-ldflags='-w -s ' -x
-CC=go build 
-OUTDIR=$(GOBIN)
+RELEASE=-ldflags='-w -s ' -x
+CC=go install 
 
-fsv _fsv:
-	$(CC) $(FLAGS) -o $(OUTDIR)/fsv $(dir)fileserver
-	# fsv -s ~/std/
+fsv _FSV:
+	$(CC) $(RELEASE) $(dir)fileserver
 
-fjson _fjson:
-	$(CC) $(FLAGS) -o $(OUTDIR)/fjson $(dir)jjson 
-	# fjson -f xxx.json
-	# fjson -d xxx(dir)
+fjson _FJSON:
+	$(CC) $(RELEASE) $(dir)jjson 
 
-rpt _rpt:
-	$(CC) $(FLAGS) -o $(OUTDIR)/rpt $(dir)reptile
-	# rpt -f xxx.json
+rpt _RPT:
+	$(CC) $(RELEASE) $(dir)reptile
 
-mip _mip:
-	$(CC) $(FLAGS) -o $(OUTDIR)/mip $(dir)mip
-	# mip
+mip _MIP:
+	$(CC) $(RELEASE) $(dir)mip
 
-pp _pp:
-	$(CC) $(FLAGS) -o $(OUTDIR)/pp $(dir)pping
-	# pping -f xxx.json
+pp _PP:
+	$(CC) $(RELEASE) $(dir)pping
 
-interip _interip:
-	$(CC) $(FLAGS) -o $(OUTDIR)/interip $(dir)internalip
+interip _INTERIP:
+	$(CC) $(RELEASE) $(dir)internalip
+
+vsfmt _VSFMT:
+	$(CC) $(RELEASE) $(dir)vsfmt
