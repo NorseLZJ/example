@@ -6,9 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
-
-	"github.com/djimenez/iconv-go"
 )
 
 var (
@@ -81,14 +80,32 @@ func main() {
 	}
 
 	if *file != "" {
-		tocOde(*file, "gb2312", "utf-8")
+		//tocOde(*file, "gb2312", "utf-8")
+		cmd := exec.Command("iconv", "-f GB2312", "-t UTF-8", "-o", *file, *file)
+		err := cmd.Start()
+		if err != nil {
+			fmt.Printf("(%s) -> Err : %v\n", *file, err)
+		}
+		err = cmd.Wait()
+		if err != nil {
+			fmt.Printf("(%s) -> wait err : %v\n", *file, err)
+		}
 	} else {
 		ret, err := GetAll(*dir)
 		if err != nil {
 			log.Fatal(err)
 		}
 		for _, vv := range ret {
-			tocOde(vv, "gb2312", "utf-8")
+			cmd := exec.Command("iconv", "-f GB2312", "-t UTF-8", "-o", vv, vv)
+			err := cmd.Start()
+			if err != nil {
+				fmt.Printf("(%s) -> Err : %v\n", vv, err)
+			}
+			err = cmd.Wait()
+			if err != nil {
+				fmt.Printf("(%s) -> wait err : %v\n", vv, err)
+			}
+			//tocOde(vv, "gb2312", "utf-8")
 		}
 	}
 }
@@ -123,27 +140,28 @@ func GetAll(path string) ([]string, error) {
 	return ret, nil
 }
 
-func tocOde(f, formEncoding, toEnconding string) error {
-	b, err := ioutil.ReadFile(f)
-	if err != nil {
-		return err
-	}
-
-	out := make([]byte, len(b))
-	//_, _, err = iconv.Convert(b, out, formEncoding, toEnconding)
-	//if err != nil {
-	//	return err
-	//}
-	// ignore nothing error like
-	iconv.Convert(b, out, formEncoding, toEnconding)
-	fd, err := os.OpenFile(f, os.O_WRONLY|os.O_TRUNC, 0600)
-	if err != nil {
-		return err
-	}
-	defer fd.Close()
-
-	if _, err = fd.Write(out); err != nil {
-		return err
-	}
-	return nil
-}
+//func tocOde(f, formEncoding, toEnconding string) error {
+//	b, err := ioutil.ReadFile(f)
+//	if err != nil {
+//		return err
+//	}
+//
+//	out := make([]byte, len(b), len(b))
+//	_, _, err = iconv.Convert(b, out, formEncoding, toEnconding)
+//	if err != nil {
+//		fmt.Println(err)
+//		return err
+//	}
+//	//iconv.Convert(b, out, formEncoding, toEnconding)
+//	fd, err := os.OpenFile(f, os.O_WRONLY|os.O_TRUNC, 0600)
+//	if err != nil {
+//		return err
+//	}
+//	defer fd.Close()
+//
+//	if _, err = fd.Write(out); err != nil {
+//		return err
+//	}
+//	return nil
+//}
+//
