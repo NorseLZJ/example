@@ -4,7 +4,7 @@ RELEASE=-ldflags='-w -s ' -x
 CC=go install 
 
 fsv _FSV:
-	$(CC) $(RELEASE) $(dir)fileserver
+	$(CC) $(RELEASE) $(dir)fsv
 
 fjson _FJSON:
 	$(CC) $(RELEASE) $(dir)jjson 
