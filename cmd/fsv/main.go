@@ -7,8 +7,6 @@ import (
 	"net"
 	"net/http"
 	"runtime"
-
-	"github.com/NorseLZJ/example/std"
 )
 
 var (
@@ -70,7 +68,9 @@ func main() {
 
 func showIp(port string) {
 	addrS, err := net.InterfaceAddrs()
-	std.CheckErr(err)
+	if err != nil {
+		panic(fmt.Sprintf("Get InterfaceAddrs err:%v", err))
+	}
 	addrTmpS := make([]string, 0)
 	for _, v := range addrS {
 		if ipNet, ok := v.(*net.IPNet); ok &&
