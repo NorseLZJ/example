@@ -18,8 +18,6 @@ var (
 
 const (
 	shareWindows = "D:\\share"
-	shareLinux   = "/share/"
-	shareMac     = "~/share/"
 	windows      = `windows`
 	linux        = `linux`
 	mac          = `darwin`
@@ -48,21 +46,25 @@ func main() {
 		return
 	}
 	share := ""
+	str, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 	switch runtime.GOOS {
 	case windows:
 		share = shareWindows
 	case linux:
-		str, err := os.Getwd()
-		if err != nil {
-			log.Fatal(err)
-		}
 		curDirs := strings.Split(str, "/")
 		if len(curDirs) < 3 {
-			log.Fatal("curDirs len < 3")
+			log.Fatal("please cd to your home dir and run fsv")
 		}
 		share = "/home/" + curDirs[2] + "/share/"
 	case mac:
-		share = shareMac
+		curDirs := strings.Split(str, "/")
+		if len(curDirs) < 3 {
+			log.Fatal("please cd to your home dir and run fsv")
+		}
+		share = "/Users/" + curDirs[2] + "/share/"
 	default:
 		log.Fatal("share dir is nil")
 	}
@@ -70,7 +72,7 @@ func main() {
 	fmt.Println("start server")
 	cpPort := fmt.Sprintf(":%s", *port)
 	showIp(cpPort)
-	err := http.ListenAndServe(cpPort, http.FileServer(http.Dir(share)))
+	err = http.ListenAndServe(cpPort, http.FileServer(http.Dir(share)))
 	if err != nil {
 		log.Fatal(err)
 	}
