@@ -6,7 +6,9 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"runtime"
+	"strings"
 )
 
 var (
@@ -16,7 +18,7 @@ var (
 
 const (
 	shareWindows = "D:\\share"
-	shareLinux   = "/home/rs/share/"
+	shareLinux   = "/share/"
 	shareMac     = "~/share/"
 	windows      = `windows`
 	linux        = `linux`
@@ -50,7 +52,15 @@ func main() {
 	case windows:
 		share = shareWindows
 	case linux:
-		share = shareLinux
+		str, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+		curDirs := strings.Split(str, "/")
+		if len(curDirs) < 3 {
+			log.Fatal("curDirs len < 3")
+		}
+		share = "/home/" + curDirs[2] + "/share/"
 	case mac:
 		share = shareMac
 	default:
