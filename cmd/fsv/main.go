@@ -16,7 +16,7 @@ var (
 
 const (
 	shareWindows = "D:\\share"
-	shareLinux   = "~/share/"
+	shareLinux   = "/home/rs/share/"
 	shareMac     = "~/share/"
 	windows      = `windows`
 	linux        = `linux`
