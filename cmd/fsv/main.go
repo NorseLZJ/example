@@ -50,20 +50,16 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	curDirs := strings.Split(str, "/")
+	if len(curDirs) < 3 {
+		log.Fatal("please cd to your home dir and run fsv")
+	}
 	switch runtime.GOOS {
 	case windows:
 		share = shareWindows
 	case linux:
-		curDirs := strings.Split(str, "/")
-		if len(curDirs) < 3 {
-			log.Fatal("please cd to your home dir and run fsv")
-		}
 		share = "/home/" + curDirs[2] + "/share/"
 	case mac:
-		curDirs := strings.Split(str, "/")
-		if len(curDirs) < 3 {
-			log.Fatal("please cd to your home dir and run fsv")
-		}
 		share = "/Users/" + curDirs[2] + "/share/"
 	default:
 		log.Fatal("share dir is nil")
