@@ -32,8 +32,11 @@ Example:
 2、fsv -p 9000 
 
 Default:
-Windows: share dir 	"D:\share\"
-Linux: share dir 	"~/share/"
+Port: 8900
+
+ShareDir
+Windows: 	"D:\share\"
+Linux&MAC: 	"~/share/"
 `
 
 func main() {
@@ -51,8 +54,8 @@ func main() {
 		log.Fatal(err)
 	}
 	curDirs := strings.Split(str, "/")
-	if len(curDirs) < 3 {
-		log.Fatal("please cd to your home dir and run fsv")
+	if len(curDirs) < 3 && runtime.GOOS != windows {
+		log.Fatal("please go to your home directory and run fsv")
 	}
 	switch runtime.GOOS {
 	case windows:
