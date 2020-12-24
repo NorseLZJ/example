@@ -1,50 +1,46 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"sync"
-
-	"github.com/NorseLZJ/example/std/cfg_marshal"
 )
 
 var (
-	goGet = flag.String("f", "./goGet.json", "go get file")
+	goGet = flag.String("cfg", "./goget.json", "go get code file")
+	proxy = flag.String("proxy", "https:goproxy.cn", "your proyxy like v2ray host or use default https://goproxy !")
 )
 
-const (
-	defProxy = "https:goproxy.cn"
-	goPath   = "GOPATH"
-	goProxy  = "GOPROXY"
-)
+type Config struct {
+	Code []string `json:"code"`
+}
 
 func main() {
 	flag.Parse()
-	cfgT := &cfg_marshal.GetConfig{}
-	err := cfg_marshal.Marshal(*goGet, cfgT)
+	cfgT := &Config{}
+	data, err := ioutil.ReadFile(*goGet)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = json.Unmarshal(data, cfgT)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	goPath := os.Getenv(goPath)
-	if goPath == "" {
-		log.Fatal(goPath, "can't is nil")
+	if os.Getenv("GOPATH") == "" {
+		log.Fatal("GOPATH must be set!")
 	}
 
-	proxy := os.Getenv(goProxy)
-	if proxy == "" {
-		os.Setenv(goProxy, defProxy)
+	if os.Getenv("GOPROXY") == "" {
+		os.Setenv("GOPROXY", *proxy)
 	}
-	if cfgT.Proxy != "" {
-		os.Setenv(goProxy, cfgT.Proxy)
-	}
-
-	codeTotal := len(cfgT.Code)
 
 	wg := sync.WaitGroup{}
-	wg.Add(codeTotal)
+	wg.Add(len(cfgT.Code))
 
 	for _, v := range cfgT.Code {
 		go func(code string) {

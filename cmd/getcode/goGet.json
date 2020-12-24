@@ -21,6 +21,5 @@
     "github.com/pelletier/go-toml",
     "github.com/pkg/errors",
     "gopkg.in/gorp.v1"
-  ],
-  "proxy":"192.168.20.151:1080"
+  ]
 }
