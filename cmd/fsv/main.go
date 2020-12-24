@@ -67,9 +67,10 @@ func main() {
 	case windows:
 		share = shareWindows
 	case linux:
-		share = "/home/" + curDirs[2] + "/share/"
 		if user.Username == "root" {
 			share = "/root/share/"
+		} else {
+			share = "/home/" + curDirs[2] + "/share/"
 		}
 	case mac:
 		share = "/Users/" + curDirs[2] + "/share/"
