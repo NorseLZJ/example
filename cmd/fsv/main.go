@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/user"
 	"runtime"
 	"strings"
 )
@@ -54,7 +55,12 @@ func main() {
 		log.Fatal(err)
 	}
 	curDirs := strings.Split(str, "/")
-	if len(curDirs) < 3 && runtime.GOOS != windows {
+	user, err2 := user.Current()
+	if err2 != nil {
+		log.Fatal(err)
+	}
+
+	if len(curDirs) < 3 && runtime.GOOS != windows && user.Username != "root" {
 		log.Fatal("please go to your home directory and run fsv")
 	}
 	switch runtime.GOOS {
@@ -62,6 +68,9 @@ func main() {
 		share = shareWindows
 	case linux:
 		share = "/home/" + curDirs[2] + "/share/"
+		if user.Username == "root" {
+			share = "/root/share/"
+		}
 	case mac:
 		share = "/Users/" + curDirs[2] + "/share/"
 	default:
