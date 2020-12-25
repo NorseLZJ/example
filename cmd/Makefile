@@ -23,3 +23,6 @@ interip _INTERIP:
 
 vsfmt _VSFMT:
 	$(CC) $(RELEASE) $(dir)vsfmt
+
+goget _GOGET:
+	$(CC) $(RELEASE) $(dir)getcode
