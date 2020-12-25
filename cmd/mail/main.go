@@ -2,25 +2,43 @@ package main
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"time"
 
-	"github.com/NorseLZJ/example/std"
-	"github.com/NorseLZJ/example/std/cfg_marshal"
 	"gopkg.in/gomail.v2"
 )
 
+type Config struct {
+	Host     string   `json:"host"`
+	Port     int      `json:"port"`
+	From     string   `json:"from"`
+	PassWord string   `json:"password"`
+	To       []string `json:"to"`
+	Body     string   `json:"body"`
+	Title    string   `json:"title"`
+	File     string   `json:"file"`
+}
+
 var (
 	cf      = flag.String("f", "./mail.json", "cfg")
-	cft     = &cfg_marshal.SendMail{}
+	cft     = &Config{}
 	timeStr = time.Now().Format("2006-01-02")
 )
 
 func main() {
 	flag.Parse()
-	err := cfg_marshal.Marshal(*cf, cft)
-	std.CheckErr(err)
+	data, err := ioutil.ReadFile(*cf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = json.Unmarshal(data, cft)
+	if err != nil {
+		log.Fatal(err)
+	}
 	userName := cft.From
 	passWord := cft.PassWord
 	host := cft.Host
@@ -28,9 +46,7 @@ func main() {
 
 	d := gomail.NewDialer(host, port, userName, passWord)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-	if err := d.DialAndSend(genMail()...); err != nil {
-		std.PrintErr(err)
-	}
+	d.DialAndSend(genMail()...)
 }
 
 func genMail() []*gomail.Message {
