@@ -20,6 +20,7 @@ cmd/pping/pping
 cmd/reptile/reptile
 cmd/reptile/reptile.exe
 cmd/mail/mail.exe
+cmd/ccrontab/ccrontab
 
 docker/nsq/nsq/nsq_stat
 docker/nsq/nsq/nsq_tail
