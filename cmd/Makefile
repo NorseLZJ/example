@@ -26,3 +26,6 @@ vsfmt _VSFMT:
 
 goget _GOGET:
 	$(CC) $(RELEASE) $(dir)getcode
+
+ccrontab _CCRONTAB:
+	$(CC) $(RELEASE) $(dir)ccrontab

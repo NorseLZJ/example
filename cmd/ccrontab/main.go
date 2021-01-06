@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"os/signal"
 	"syscall"
 
@@ -14,7 +15,8 @@ import (
 )
 
 type Task struct {
-	Cmd    string `json:"cmd"`    // bin/bash
+	Cmd    string `json:"cmd"`    // sh
+	Param  string `json:"param"`  // -c
 	Script string `json:"script"` // /aaa/bbb.sh
 	Space  string `json:"space"`  // * * * * * *
 }
@@ -33,17 +35,49 @@ func main() {
 	cfgT := &Config{}
 	data, err := ioutil.ReadFile(*cfg)
 	if err != nil {
-		log.Fatal(err)
+		exitErr(err)
 	}
 	err = json.Unmarshal(data, cfgT)
 	if err != nil {
-		log.Fatal(err)
+		exitErr(err)
 	}
 
-	c := cron.New()
-	c.AddFunc("* * * * *", func() { fmt.Println("Every hour on the half hour") })
+	c := cron.New(cron.WithSeconds())
+
+	for _, vv := range cfgT.Tasks {
+		_, err = c.AddFunc(vv.Space, func() {
+			//cmd := exec.Command(vv.Cmd, vv.Param, vv.Script)
+			cmd := exec.Command("sh", "-c", vv.Script)
+			b, err := cmd.Output()
+			if err != nil {
+				log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
+			}
+			fmt.Println(string(b))
+			//err = cmd.Start()
+			//if err != nil {
+			//	log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
+			//}
+			//err = cmd.Wait()
+			//if err != nil {
+			//	log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
+			//}
+		})
+		if err != nil {
+			exitErr(err)
+		}
+	}
+	//_, err = c.AddFunc("*/5 * * * * ?", func() { fmt.Println("hello world") })
+	//if err != nil {
+	//	exitErr(err)
+	//}
 	c.Start()
-	waitExit()
+	select {}
+	//waitExit()
+}
+
+func exitErr(err error) {
+	fmt.Println(err)
+	os.Exit(1)
 }
 
 func waitExit() {

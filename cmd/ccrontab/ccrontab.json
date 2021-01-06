@@ -2,14 +2,10 @@
   "logDir": "",
   "tasks": [
     {
-      "cmd": "/bin/bash",
+      "cmd": "sh",
+      "param": "-c",
       "script": "/home/rs/go/src/github.com/NorseLZJ/example/cmd/ccrontab/test.sh",
-      "space": "* * * * * *"
-    },
-    {
-      "cmd": "/bin/bash",
-      "script": "/home/rs/go/src/github.com/NorseLZJ/example/cmd/ccrontab/test.sh",
-      "space": "* * * * * *"
+      "space": "*/5 * * * * ?"
     }
   ]
 }
