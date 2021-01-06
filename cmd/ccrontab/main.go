@@ -11,6 +11,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/gpmgo/gopm/modules/base"
+
 	"github.com/robfig/cron"
 )
 
@@ -27,7 +29,8 @@ type Config struct {
 }
 
 var (
-	cfg = flag.String("c", "./ccrontab.json", "crontab config json")
+	cfg    = flag.String("config", "./ccrontab.json", "crontab config json")
+	logDir = flag.String("log", "./ccrontab.log", "crontab log")
 )
 
 func main() {
@@ -46,33 +49,32 @@ func main() {
 
 	for _, vv := range cfgT.Tasks {
 		_, err = c.AddFunc(vv.Space, func() {
-			//cmd := exec.Command(vv.Cmd, vv.Param, vv.Script)
-			cmd := exec.Command("sh", "-c", vv.Script)
+			script, err := ioutil.ReadFile(vv.Script)
+			if err != nil {
+				exitErr(err)
+			}
+			cmd := exec.Command(vv.Cmd, vv.Param, string(script))
 			b, err := cmd.Output()
 			if err != nil {
 				log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
 			}
-			fmt.Println(string(b))
-			//err = cmd.Start()
-			//if err != nil {
-			//	log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
-			//}
-			//err = cmd.Wait()
-			//if err != nil {
-			//	log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
-			//}
+			if cfgT.LogDir != "" {
+				logDir = &cfgT.LogDir
+			}
+			if !base.IsExist(*logDir) {
+				os.Create(*logDir)
+			}
+			if *logDir != "" {
+				ioutil.WriteFile(*logDir, b, os.ModeAppend)
+			}
+			//fmt.Println(string(b))
 		})
 		if err != nil {
 			exitErr(err)
 		}
 	}
-	//_, err = c.AddFunc("*/5 * * * * ?", func() { fmt.Println("hello world") })
-	//if err != nil {
-	//	exitErr(err)
-	//}
 	c.Start()
-	select {}
-	//waitExit()
+	waitExit()
 }
 
 func exitErr(err error) {
