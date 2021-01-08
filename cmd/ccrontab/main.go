@@ -5,16 +5,17 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"os/signal"
 	"syscall"
-
-	"github.com/gpmgo/gopm/modules/base"
+	"time"
 
 	"github.com/robfig/cron"
+	"github.com/sirupsen/logrus"
 )
+
+var log = logrus.New()
 
 type Task struct {
 	Cmd    string `json:"cmd"`    // sh
@@ -24,13 +25,12 @@ type Task struct {
 }
 
 type Config struct {
-	LogDir string `json:"logDir"`
-	Tasks  []Task `json:"tasks"`
+	Tasks []Task `json:"tasks"`
 }
 
 var (
-	cfg    = flag.String("config", "./ccrontab.json", "crontab config json")
-	logDir = flag.String("log", "./ccrontab.log", "crontab log")
+	cfg    = flag.String("c", "./ccb.json", "crontab config json")
+	logDir = flag.String("l", "./ccb.log", "crontab log")
 )
 
 func main() {
@@ -44,9 +44,13 @@ func main() {
 	if err != nil {
 		exitErr(err)
 	}
-
+	fd, err := os.OpenFile(*logDir, os.O_WRONLY|os.O_TRUNC, 0600)
+	if err != nil {
+		exitErr(err)
+	}
+	defer fd.Close()
+	log.SetOutput(fd)
 	c := cron.New(cron.WithSeconds())
-
 	for _, vv := range cfgT.Tasks {
 		_, err = c.AddFunc(vv.Space, func() {
 			script, err := ioutil.ReadFile(vv.Script)
@@ -56,23 +60,19 @@ func main() {
 			cmd := exec.Command(vv.Cmd, vv.Param, string(script))
 			b, err := cmd.Output()
 			if err != nil {
-				log.Printf("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
+				log.Error("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
 			}
-			if cfgT.LogDir != "" {
-				logDir = &cfgT.LogDir
-			}
-			if !base.IsExist(*logDir) {
-				os.Create(*logDir)
-			}
-			if *logDir != "" {
-				ioutil.WriteFile(*logDir, b, os.ModeAppend)
-			}
-			//fmt.Println(string(b))
+			log.Info("\nCCB START TIME(%s)\n", time.Now().String())
+			log.Info(fmt.Sprintf("%s", string(b)))
+			log.Info("\nCCB END TIME(%s)\n", time.Now().String())
 		})
 		if err != nil {
 			exitErr(err)
 		}
 	}
+	c.AddFunc("*/5 * * * * ?", func() {
+		log.Info("hello world")
+	})
 	c.Start()
 	waitExit()
 }
