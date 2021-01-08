@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -12,10 +13,7 @@ import (
 	"time"
 
 	"github.com/robfig/cron"
-	"github.com/sirupsen/logrus"
 )
-
-var log = logrus.New()
 
 type Task struct {
 	Cmd    string `json:"cmd"`    // sh
@@ -37,49 +35,36 @@ func main() {
 	flag.Parse()
 	cfgT := &Config{}
 	data, err := ioutil.ReadFile(*cfg)
-	if err != nil {
-		exitErr(err)
-	}
+	exitErr(err)
 	err = json.Unmarshal(data, cfgT)
-	if err != nil {
-		exitErr(err)
-	}
+	exitErr(err)
 	fd, err := os.OpenFile(*logDir, os.O_WRONLY|os.O_TRUNC, 0600)
-	if err != nil {
-		exitErr(err)
-	}
+	exitErr(err)
 	defer fd.Close()
 	log.SetOutput(fd)
 	c := cron.New(cron.WithSeconds())
 	for _, vv := range cfgT.Tasks {
 		_, err = c.AddFunc(vv.Space, func() {
 			script, err := ioutil.ReadFile(vv.Script)
-			if err != nil {
-				exitErr(err)
-			}
+			exitErr(err)
 			cmd := exec.Command(vv.Cmd, vv.Param, string(script))
 			b, err := cmd.Output()
-			if err != nil {
-				log.Error("cmd:%s script:%s Err: %v\n", vv.Cmd, vv.Script, err)
-			}
-			log.Info("\nCCB START TIME(%s)\n", time.Now().String())
-			log.Info(fmt.Sprintf("%s", string(b)))
-			log.Info("\nCCB END TIME(%s)\n", time.Now().String())
-		})
-		if err != nil {
 			exitErr(err)
-		}
+			fd.Write([]byte(fmt.Sprintf("\nCCB START TIME(%s)\n", time.Now().String())))
+			fd.Write(b)
+			fd.Write([]byte(fmt.Sprintf("\nCCB END TIME(%s)\n", time.Now().String())))
+		})
+		exitErr(err)
 	}
-	c.AddFunc("*/5 * * * * ?", func() {
-		log.Info("hello world")
-	})
 	c.Start()
 	waitExit()
 }
 
 func exitErr(err error) {
-	fmt.Println(err)
-	os.Exit(1)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 func waitExit() {
