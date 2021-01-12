@@ -13,6 +13,9 @@ obj = main.cpp \
 run main:
 	$(CC) $(CFLAGS) $(MYSQLFLAGS) $(obj) $(REDISFLAGS) -o main 
 
+bitree BITREE:
+	gcc bitree.c -o bitree -g -Wall
+
 clear _clean:
 	rm main
 
