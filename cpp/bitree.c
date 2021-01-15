@@ -1,5 +1,5 @@
+#include <malloc.h>
 #include <stdio.h>
-#include <sys/malloc.h>
 
 typedef struct Node
 {
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
         BSTInsert(&T, table[i]);
     }
     printf("\n---------\n");
-    InOrderTraverse(T);
+    InOrderTraveres(T);
     printf("\ninput search num:");
     scanf("%d", &x);
     p = BSTSearch(T, x);
@@ -74,7 +74,7 @@ int BSTInsert(BiTree *T, int x)
             return 0;
         }
         parent = cur;
-        if (x < cur->lchild)
+        if (x < cur->lchild->data)
         {
             cur = cur->lchild;
         }
@@ -93,7 +93,7 @@ int BSTInsert(BiTree *T, int x)
     p->rchild = NULL;
     if (!parent)
     {
-        *T = parent;
+        *T = p;
     }
     else if (x < parent->data)
     {
@@ -108,6 +108,8 @@ int BSTInsert(BiTree *T, int x)
 
 void InOrderTraveres(BiTree T)
 {
+    if (!T)
+        return;
     InOrderTraveres(T->lchild);
     printf("%4d", T->data);
     InOrderTraveres(T->rchild);
