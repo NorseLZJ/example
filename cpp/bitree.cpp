@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/malloc.h>
@@ -97,4 +96,3 @@ void InOrderTraveres(BiTree T)
     printf("%4d", T->data);
     InOrderTraveres(T->rchild);
 }
-
