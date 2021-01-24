@@ -10,7 +10,7 @@ OBJ = main.cpp \
 	src/mysql_connection_pool.cpp \
 	src/test.cpp \
 
-run main:
+test TEST:
 	$(CC) $(CFLAGS) $(MYSQLFLAGS) $(OBJ) $(REDISFLAGS) -o main 
 
 bitree BITREE:

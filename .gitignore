@@ -34,3 +34,6 @@ docker/nsq/nsq/to_nsq
 
 .DS_Store
 cmd/.DS_Store
+cpp/main
+cpp/main.dSYM
+
