@@ -37,3 +37,5 @@ cmd/.DS_Store
 cpp/main
 cpp/main.dSYM
 
+shell/*.txt
+
