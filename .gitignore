@@ -39,3 +39,5 @@ cpp/main.dSYM
 
 shell/*.txt
 
+nodejs/hello/node_modules
+
