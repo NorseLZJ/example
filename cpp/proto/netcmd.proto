@@ -1,0 +1,15 @@
+syntax = "proto3";
+package netcmd;
+
+message Billboard
+{
+	string msg = 1; 
+}
+
+message EnterGsNotify
+{
+	string  serverTime = 1;  
+	uint32  serverVersion = 2;  
+	string  serverOpenTime = 3; 
+	uint32  clientfuncswitch = 4; 
+}
