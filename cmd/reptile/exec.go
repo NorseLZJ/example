@@ -3,12 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/NorseLZJ/example/std"
 	"github.com/gocolly/colly"
 )
 
@@ -46,10 +46,12 @@ func soldInfo(community string, page int) {
 	c.SetRequestTimeout(time.Duration(120) * time.Second)
 	c.Limit(&colly.LimitRule{DomainGlob: soldUrl, Parallelism: 1}) //Parallelism代表最大并发数
 	c.OnRequest(func(r *colly.Request) {
-		llog.Info("Visiting :%s", r.URL)
+		fmt.Printf("Visiting :%s", r.URL)
 	})
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			log.Printf("OnError err:")
+		}
 	})
 	//访问所有info 访问前20页采用goroutine
 	c.OnHTML(".listContent>li", func(e *colly.HTMLElement) {
@@ -79,13 +81,17 @@ func soldInfo(community string, page int) {
 				CreateTime: createTime,
 			}
 			err := db.Save(val).Error
-			std.PrintErr(err)
+			if err != nil {
+				fmt.Printf("err:%v", err)
+			}
 		}
 	})
 
 	url := fmt.Sprintf("%s%s%s%d", soldUrl, community, "/pg", page)
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err:%v", err)
+		}
 		c.Visit(url)
 	})
 	c.Visit(url)
@@ -101,10 +107,12 @@ func sellingInfo(community string, page int) {
 	c.SetRequestTimeout(time.Duration(120) * time.Second)
 	c.Limit(&colly.LimitRule{DomainGlob: sellUrl, Parallelism: 1}) //Parallelism代表最大并发数
 	c.OnRequest(func(r *colly.Request) {
-		llog.Info("Visiting :%s", r.URL)
+		fmt.Printf("Visiting :%s", r.URL)
 	})
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err:%v", err)
+		}
 	})
 	c.OnHTML(".sellListContent>li", func(e *colly.HTMLElement) {
 		re, _ := regexp.Compile(`\d+`)
@@ -128,13 +136,17 @@ func sellingInfo(community string, page int) {
 				CreateTime: createTime,
 			}
 			err := db.Save(val).Error
-			std.PrintErr(err)
+			if err != nil {
+				fmt.Printf("err:%v", err)
+			}
 		}
 	})
 
 	url := fmt.Sprintf("%s%s%s%d", sellUrl, community, "/pg", page)
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err:%v", err)
+		}
 		c.Visit(url)
 	})
 	c.Visit(url)
@@ -156,22 +168,28 @@ func sellingPage(community string) int {
 	c.SetRequestTimeout(time.Duration(35) * time.Second)
 	c.Limit(&colly.LimitRule{DomainGlob: sellUrl, Parallelism: 1})
 	c.OnRequest(func(r *colly.Request) {
-		llog.Info("Visiting :%s", r.URL)
+		fmt.Printf("Visiting :%s", r.URL)
 	})
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 	})
 	//获取不同地区的总页数
 	c.OnHTML(".contentBottom .house-lst-page-box", func(e *colly.HTMLElement) {
 		page := Page{}
 		err := json.Unmarshal([]byte(e.Attr("page-data")), &page)
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 		totalPage = page.TotalPage
 	})
 
 	url := fmt.Sprintf("%s%s", sellUrl, community)
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 		c.Visit(url)
 	})
 	c.Visit(url)
@@ -189,22 +207,28 @@ func soldPage(community string) int {
 	c.SetRequestTimeout(time.Duration(90) * time.Second)
 	c.Limit(&colly.LimitRule{DomainGlob: soldUrl, Parallelism: 1}) //Parallelism代表最大并发数
 	c.OnRequest(func(r *colly.Request) {
-		llog.Info("Visiting :%s", r.URL)
+		fmt.Printf("Visiting :%s", r.URL)
 	})
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 	})
 	//获取不同地区的总页数
 	c.OnHTML(".contentBottom .house-lst-page-box", func(e *colly.HTMLElement) {
 		page := Page{}
 		err := json.Unmarshal([]byte(e.Attr("page-data")), &page)
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 		totalPage = page.TotalPage
 	})
 
 	url := fmt.Sprintf("%s%s", soldUrl, community)
 	c.OnError(func(_ *colly.Response, err error) {
-		std.PrintErr(err)
+		if err != nil {
+			fmt.Printf("err: %v", err)
+		}
 		c.Visit(url)
 	})
 	c.Visit(url)
