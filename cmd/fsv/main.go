@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"os/user"
@@ -81,26 +80,10 @@ func main() {
 	fmt.Println("start server")
 	cpPort := fmt.Sprintf(":%s", *port)
 	showIp(cpPort)
-	err = http.ListenAndServe(cpPort, http.FileServer(http.Dir(share)))
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
-func showIp(port string) {
-	addrS, err := net.InterfaceAddrs()
+	fs := CustomFileServer(http.Dir(share))
+	err = http.ListenAndServe(cpPort, RequestLogger(fs))
 	if err != nil {
-		panic(fmt.Sprintf("Get InterfaceAddrs err:%v", err))
-	}
-	addrTmpS := make([]string, 0)
-	for _, v := range addrS {
-		if ipNet, ok := v.(*net.IPNet); ok &&
-			!ipNet.IP.IsLoopback() && ipNet.IP.To4() != nil {
-			addrTmpS = append(addrTmpS, ipNet.IP.String())
-		}
-	}
-	fmt.Println("try access this address please")
-	for _, v := range addrTmpS {
-		fmt.Println(fmt.Sprintf("%s%s", v, port))
+		fmt.Println(err)
 	}
 }
