@@ -220,20 +220,132 @@ var DirListTemplateHTML = `
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Index of /</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/file-icon-vectors@1.0.0/dist/file-icon-square-o.min.css"/>
-    <style type="text/css">td.icon-parent {
-        height: 18px;
-        width: 18px;
-    }
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/file-icon-vectors@1.0.0/dist/file-icon-square-o.min.css"/> -->
 
+    <style>
+        body {
+            font: 15px/1.4em Arial, "Helvetica Neue", Helvetica, sans-serif;
+            padding: 0 40px;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            margin: 80px auto 40px;
+            max-width: 960px;
+            padding: 40px 50px 30px;
+            background-color: #fff;
+        }
+
+        .badge {
+            float: right;
+        }
+
+        h1 {
+            font-size: 28px;
+            line-height: 2em;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 18px;
+            font-weight: 400;
+            margin: 20px 0;
+        }
+
+        .versions {
+            float: right;
+            padding: 2px 12px 2px 6px;
+            margin-top: 14px;
+            max-width: 200px;
+        }
+
+        .description {
+            margin: 10px 0;
+            font-size: 20px;
+            color: #666;
+        }
+
+        .path {
+            margin: 20px 0;
+            padding: 0;
+            border-top: 1px solid #e5e5e5;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        table {
+            width: 40%;
+            border-spacing: 0;
+        }
+
+        .name {
+            width: auto;
+            text-align: left;
+            padding-right: 20px;
+        }
+
+        .size {
+            width: 40px;
+            text-align: right;
+            padding-right: 20px;
+            color: #444;
+        }
+
+        .time {
+            width: 240px;
+            text-align: right;
+            color: #444;
+        }
+
+        th.name, th.time, th.size {
+            color: #999;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        a {
+            color: #ff5627;
+            text-decoration: none;
+        }
+
+        a:hover, a:focus {
+            color: #ff5627;
+            text-decoration: underline;
+        }
+
+        .landing {
+            margin-top: 30px;
+            text-align: right;
+        }
+
+        footer {
+            max-width: 960px;
+            margin: 0 auto 80px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer-left {
+            float: left;
+        }
+
+        .footer-right {
+            float: right;
+        }
+
+        .footer-right a {
+            display: inline-block;
+            margin-left: 40px;
+        }
+    </style>
     td.file-size {
-        text-align: right;
-        padding-left: 1em;
-        white-space: nowrap;
+    text-align: right;
+    padding-left: 1em;
+    white-space: nowrap;
     }
 
     td.display-name {
-        padding-left: 2.0em;
+    padding-left: 2.0em;
     }
     </style>
 </head>
