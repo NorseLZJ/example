@@ -221,7 +221,6 @@ var DirListTemplateHTML = `
     <meta name="viewport" content="width=device-width">
     <title>Index of /</title>
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/file-icon-vectors@1.0.0/dist/file-icon-square-o.min.css"/> -->
-
     <style>
         body {
             font: 15px/1.4em Arial, "Helvetica Neue", Helvetica, sans-serif;
@@ -256,12 +255,12 @@ var DirListTemplateHTML = `
             float: right;
             padding: 2px 12px 2px 6px;
             margin-top: 14px;
-            max-width: 200px;
+            max-width: 400px;
         }
 
         .description {
             margin: 10px 0;
-            font-size: 20px;
+            font-size: 16px;
             color: #666;
         }
 
@@ -284,7 +283,7 @@ var DirListTemplateHTML = `
         }
 
         .size {
-            width: 40px;
+            width: 80px;
             text-align: right;
             padding-right: 20px;
             color: #444;
@@ -338,16 +337,7 @@ var DirListTemplateHTML = `
             margin-left: 40px;
         }
     </style>
-    td.file-size {
-    text-align: right;
-    padding-left: 1em;
-    white-space: nowrap;
-    }
 
-    td.display-name {
-    padding-left: 2.0em;
-    }
-    </style>
 </head>
 <body>
 <h1>Index of {{.DirName}}</h1>
@@ -370,4 +360,6 @@ var DirListTemplateHTML = `
 </address>
 </body>
 </html>
+
+
 `
