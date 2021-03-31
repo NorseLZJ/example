@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"os/user"
 	"runtime"
-	"strings"
 )
 
 var (
@@ -49,19 +47,12 @@ func main() {
 		return
 	}
 	share := ""
-	str, err := os.Getwd()
+
+	user, err := user.Current()
 	if err != nil {
 		log.Fatal(err)
 	}
-	curDirs := strings.Split(str, "/")
-	user, err2 := user.Current()
-	if err2 != nil {
-		log.Fatal(err)
-	}
 
-	if len(curDirs) < 3 && runtime.GOOS != windows && user.Username != "root" {
-		log.Fatal("please go to your home directory and run fsv")
-	}
 	switch runtime.GOOS {
 	case windows:
 		share = shareWindows
@@ -69,14 +60,15 @@ func main() {
 		if user.Username == "root" {
 			share = "/root/share/"
 		} else {
-			share = "/home/" + curDirs[2] + "/share/"
+			share = fmt.Sprintf("/home/%s/share", user.Username)
 		}
 	case mac:
-		share = "/Users/" + curDirs[2] + "/share/"
+		share = fmt.Sprintf("/Users/%s/share", user.Username)
 	default:
 		log.Fatal("share dir is nil")
 	}
 
+	fmt.Printf("share:%s\n", share)
 	fmt.Println("start server")
 	cpPort := fmt.Sprintf(":%s", *port)
 	showIp(cpPort)
