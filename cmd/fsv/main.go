@@ -15,7 +15,7 @@ var (
 )
 
 const (
-	shareWindows = "D:\\share"
+	shareWindows = "D:\\share\\"
 	windows      = `windows`
 	linux        = `linux`
 	mac          = `darwin`
@@ -60,10 +60,10 @@ func main() {
 		if user.Username == "root" {
 			share = "/root/share/"
 		} else {
-			share = fmt.Sprintf("/home/%s/share", user.Username)
+			share = fmt.Sprintf("/home/%s/share/", user.Username)
 		}
 	case mac:
-		share = fmt.Sprintf("/Users/%s/share", user.Username)
+		share = fmt.Sprintf("/Users/%s/share/", user.Username)
 	default:
 		log.Fatal("share dir is nil")
 	}
