@@ -74,7 +74,9 @@ func main() {
 	showIp(cpPort)
 
 	fs := CustomFileServer(http.Dir(share))
-	err = http.ListenAndServe(cpPort, RequestLogger(fs))
+	err = http.ListenAndServe(cpPort, handler(fs))
+
+	//err = http.ListenAndServe(cpPort, http.FileServer(http.Dir(share)))
 	if err != nil {
 		fmt.Println(err)
 	}

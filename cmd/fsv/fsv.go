@@ -47,10 +47,10 @@ func (cf *customFileHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.URL.Path = upath
 	}
 
-	ServeFile(w, r, cf.root, path.Clean(upath), true, "")
+	ServeFile(w, r, cf.root, path.Clean(upath))
 }
 
-func ServeFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, name string, redirect bool, templateName string) {
+func ServeFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, name string) {
 	f, err := fs.Open(name)
 	if err != nil {
 		msg, code := toHTTPError(err)
@@ -67,7 +67,7 @@ func ServeFile(w http.ResponseWriter, r *http.Request, fs http.FileSystem, name 
 	}
 
 	if d.IsDir() {
-		ListDirectory(w, r, f, templateName)
+		listDirectory(w, r, f)
 		return
 	}
 	http.ServeContent(w, r, d.Name(), d.ModTime(), f)
@@ -84,14 +84,17 @@ func toHTTPError(err error) (msg string, httpStatus int) {
 	return "500 Internal Server Error", http.StatusInternalServerError
 }
 
-func ListDirectory(w http.ResponseWriter, r *http.Request, f http.File, templateName string) {
+func listDirectory(w http.ResponseWriter, r *http.Request, f http.File) {
 	RootDir, err := f.Stat()
 	if err != nil {
 		panic(err)
 	}
-	var dirContents DirectoryContent
-	dirContents.DirName = RootDir.Name()
-	dirContents.Files = make([]FileContent, 0)
+	infos := DirS{
+		DirName: RootDir.Name(),
+		Files:   make([]File, 0, 0),
+		IPAddr:  r.Host,
+	}
+	vFile := File{}
 	dirs, err := f.Readdir(-1)
 	if err != nil {
 		log.Printf("http: error reading directory: %v", err)
@@ -111,54 +114,44 @@ func ListDirectory(w http.ResponseWriter, r *http.Request, f http.File, template
 		}
 
 		url := url.URL{Path: name}
-		fileContent := FileContent{Name: name, Size: GetHumanReadableSize(d), URL: url, Extension: fileExtension}
-		dirContents.Files = append(dirContents.Files, fileContent)
+		vFile.Name = name
+		vFile.Size = size(d)
+		vFile.URL = url.String()
+		vFile.Extension = fileExtension
+		infos.Files = append(infos.Files, vFile)
 	}
-	dirContents.IPAddr = r.Host
-	renderTemplate(w, templateName, dirContents)
+	renderTemplate(w, infos)
 }
 
-type DirectoryContent struct {
+type DirS struct {
 	DirName string
-	Files   []FileContent
+	Files   []File
 	IPAddr  string
 }
 
-type FileContent struct {
+type File struct {
 	Name      string
 	Size      string
-	URL       url.URL
+	URL       string
 	Extension string
 }
 
-func renderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
-	var t *template.Template
-	var err error
-	// use default rendering html
-	if len(tmpl) == 0 {
-		t = template.New("index")
-		t, err = t.Parse(DirListTemplateHTML)
-	} else {
-		templatePath, _ := filepath.Abs(tmpl + ".html")
-		fmt.Println("template path", templatePath)
-		t, err = template.ParseFiles(templatePath)
+func renderTemplate(w http.ResponseWriter, data interface{}) {
+	t, err := template.New("index").Parse(index)
+	if err != nil {
+		panic(fmt.Sprintf("Template Parse err:%s\n", err.Error()))
 	}
 
-	if err != nil {
-		fmt.Println("Error in parsing template ", err)
-		panic(err)
-	}
 	t.Execute(w, data)
 }
 
-func RequestLogger(handler http.Handler) http.Handler {
+func handler(handler http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
 		handler.ServeHTTP(w, r)
 	})
 }
 
-func GetHumanReadableSize(f os.FileInfo) string {
+func size(f os.FileInfo) string {
 	if f.IsDir() {
 		return "--"
 	}
@@ -167,6 +160,6 @@ func GetHumanReadableSize(f os.FileInfo) string {
 	return fmt.Sprintf("%.2f MB", mb)
 }
 
-var DirListTemplateHTML = `
+var index = `
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Index of /</title><style>body{font:15px/1.4em Arial,"Helvetica Neue",Helvetica,sans-serif;padding:0 40px;background-color:#f2f2f2}.container{margin:80px auto 40px;max-width:960px;padding:40px 50px 30px;background-color:#fff}.badge{float:right}h1{font-size:28px;line-height:2em;margin:0}h2{font-size:18px;font-weight:400;margin:20px 0}.versions{float:right;padding:2px 12px 2px 6px;margin-top:14px;max-width:400px}.description{margin:10px 0;font-size:16px;color:#666}.path{margin:20px 0;padding:0;border-top:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5}table{width:100%;border-spacing:0}.name{width:auto;text-align:left;padding-right:20px}.size{width:80px;text-align:right;padding-right:20px;color:#444}.time{width:240px;text-align:right;color:#444}th.name,th.size,th.time{color:#999;text-transform:uppercase;font-size:12px;letter-spacing:1px}a{color:#ff5627;text-decoration:none}a:focus,a:hover{color:#ff5627;text-decoration:underline}.landing{margin-top:30px;text-align:right}footer{max-width:960px;margin:0 auto 80px;font-size:14px;color:#666}.footer-left{float:left}.footer-right{float:right}.footer-right a{display:inline-block;margin-left:40px}</style></head><body><h1>Index of {{.DirName}}</h1><table>{{range .Files}}<tr><td class="icon-parent"><i class="fiv-cla fiv-icon-{{.Extension}}"></i></td><td class="file-size"><code>{{.Size}}</code></td><td class="display-name"><a href="{{.URL}}">{{.Name}}</a></td></tr>{{end}}</table><br><address style="font-size:1.5em"><a href="https://github.com/NorseLZJ/example/tree/master/cmd/fsv"><strong>fsv</strong></a> running @ {{.IPAddr}}</address></body></html>
 `
