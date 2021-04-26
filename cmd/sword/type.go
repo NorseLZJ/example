@@ -7,7 +7,7 @@ type ToolStruct struct {
 }
 
 type Frame struct {
-	Res string `json:"res"`
-	X   int    `json:"x"`
-	Y   int    `json:"y"`
+	Res string  `json:"res"`
+	X   float32 `json:"x"`
+	Y   float32 `json:"y"`
 }
