@@ -1,0 +1,92 @@
+{
+  "center_url": "http://127.0.0.1:9002",
+  "server_list_src": {
+    "channel": "nianka_android_test001",
+    "game_id": "304",
+    "data": [
+      {
+        "tag": 1,
+        "group_id": 1,
+        "group_name": "年卡版专区",
+        "server_list": [
+          {
+            "tag": 1,
+            "name_id": 1,
+            "show_id": 1001,
+            "server_id": 1001,
+            "white_login": 1,
+            "status": 0,
+            "label": 0,
+            "show_name": "测试1区",
+            "ip": "xxx.xxx.com",
+            "port": "8001",
+            "grayscale_version": "0",
+            "show_time": 1608540124,
+            "start_time": 1608540800
+          }
+        ]
+      }
+    ]
+  },
+  "game_list_src": {
+    "channel": "nianka_android_test001",
+    "data": [
+      {
+        "tag": 1,
+        "game_id": "304",
+        "game_name": "复古年卡版",
+        "url": "http://XXXX.XXXX/aaa",
+        "version": "1.0.2"
+      },
+      {
+        "tag": 2,
+        "game_id": "304",
+        "game_name": "复古年卡版",
+        "url": "http://XXXX.XXXX/aaa",
+        "version": "1.0.2"
+      }
+    ]
+  },
+  "recharge_info_src": {
+    "channel": "nianka_android_test001",
+    "game_id": "304",
+    "package_name": "5661",
+    "data": [
+      {
+        "id": "com.fgbxh5cz.yuanbao6",
+        "name": "600元宝",
+        "num": "6"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao30",
+        "name": "3000元宝",
+        "num": "30"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao98",
+        "name": "9800元宝",
+        "num": "98"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao198",
+        "name": "19800元宝",
+        "num": "198"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao298",
+        "name": "29800元宝",
+        "num": "298"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao488",
+        "name": "48800元宝",
+        "num": "488"
+      },
+      {
+        "id": "com.fgbxh5cz.yuanbao648",
+        "name": "64800元宝",
+        "num": "648"
+      }
+    ]
+  }
+}
