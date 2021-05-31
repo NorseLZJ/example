@@ -30,7 +30,7 @@ def open_browser():
     option = webdriver.ChromeOptions()
     option.add_argument('headless')
     global browser
-    browser = webdriver.Chrome('./chromedriver.exe', options=option)
+    browser = webdriver.Chrome('./chromedriver', options=option)
 
 
 def open_info(val):
@@ -46,8 +46,15 @@ def open_fen_hong(val):
     url = format("%s%s" % (fen_hong, val))
     browser.get(url)
     html = browser.page_source
-    data = str(pq(html))
+    doc = pq(html)
+    data = doc('tr td')
+    if len(data) <= 0:
+        return
+    print(url)
     print(data)
+    ll = data('td').items()
+    for val in ll:
+        print(val)
 
 
 def open_list(url):
