@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 cmd=$1
-if [[ $cmd != "" &&  $cmd == "scan" ]];then
+if [[ $cmd != "" ]];then
     nmap -p 22 -oX ssh.xml 192.168.1.1-251
 fi
 
