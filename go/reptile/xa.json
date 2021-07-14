@@ -1,0 +1,25 @@
+{
+  "sqlConfig": {
+    "driver": "mysql",
+    "host": "192.168.20.177",
+    "port": "3307",
+    "db": "lianjia",
+    "user": "root",
+    "password": "123456",
+    "charset": "utf8"
+  },
+  "url": {
+    "sold_url": "https://xa.lianjia.com/chengjiao/",
+    "sell_url": "https://xa.lianjia.com/ershoufang/"
+  },
+  "user_agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+  "district": [
+    "weiyang",
+    "xinchengqu",
+    "beilin",
+    "lianhu",
+    "yanta",
+    "changan4",
+    "lingtong"
+  ]
+}

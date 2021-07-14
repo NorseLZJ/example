@@ -1,0 +1,11 @@
+{
+  "logDir": "",
+  "tasks": [
+    {
+      "cmd": "sh",
+      "param": "-c",
+      "script": "/home/rs/go/src/github.com/NorseLZJ/example/cmd/ccrontab/test.sh",
+      "space": "*/5 * * * * ?"
+    }
+  ]
+}
