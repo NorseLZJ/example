@@ -1,0 +1,13 @@
+syntax = "proto3";
+package message;
+option go_package = "/pb";
+
+message Req {
+    int32 id = 1;
+    string msg = 2;
+}
+
+message Ack {
+    int32 id = 1;
+    string msg = 2;
+}
