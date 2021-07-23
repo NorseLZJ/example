@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <time.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <exception>
+#include "exception.hpp"
+
+//#include <boost/date_time/gregorian/gregorian.hpp>
+using namespace std;
+
+int main(int argc, char const *argv[])
+{
+    /*
+	char *sql = "hello world 1\n"
+				"hello world 2\n";
+
+	printf("%s", sql);
+    */
+
+    //boost::gregorian::date d(2010, 1, 30);
+    //std::cout << d.year() << std::endl;
+    //std::cout << d.month() << std::endl;
+    //std::cout << d.day() << std::endl;
+    //std::cout << d.day_of_week() << std::endl;
+    //std::cout << d.end_of_month() << std::endl;
+
+    //cout << "time(NULL)" << endl;
+    //cout << time(NULL) << endl;
+
+    vector<string> ns;
+    string vv = "hello world";
+    ns.push_back(vv);
+    vv = "hhhsss";
+    ns.push_back(vv);
+
+    try
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            printf("%s\n", ns[i].c_str());
+        }
+    }
+    catch (std::exception &e)
+    {
+        printf("error");
+    }
+    catch (...)
+    {
+        printf("uk error");
+    }
+
+    //for (int i = 0; i < 100 ; i++){
+    //    ns.push_back(to_string(i));
+    //}
+    //for (auto i : ns){
+    //    printf("%p -> %s\n",i.c_str(),i.c_str());
+    //}
+
+    return 0;
+}
