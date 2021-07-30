@@ -1,3 +1,5 @@
+package httpclient
+
 import (
 	"fmt"
 	"io"
@@ -49,4 +51,3 @@ func DoPost(url string, params url.Values) ([]byte, int, error) {
 	}
 	return body, code, err
 }
-
