@@ -1,10 +1,19 @@
-#### **some program by golang or cpp**
+# 一些简单的例子和我平时使用的简单小工具(go,cpp,shell ...)
 
-- cmd/fileserver 很简单的文件服务器，提供最简单的上传下载功能，
-    - 需要通过 share.json 配置程序端口，（上传，下载）文件夹
+### go
 
-- cmd/jjson 对单个 json 文件格式化，或者整个文件夹下的 json文件格式化
-    - 通过命令行 -f xxx.json or -d dir 进行
+-   jjson json 文件格式化输出到文件
 
-- cmd/reptile 爬取链家房屋（在售，售出）信息，
-    - 通过配置文件配置 爬取的 城市 以及 区县 和MySQL数据库，先存入 MySQL再导出到Excel 做数据分析
+-   mail 发送邮件，可以带一个附件
+
+-   mysql 简单的 mysql 连接池,有一个简单的查询，其它的如有需要自己封装
+
+-   redix 简单的 redis 连接池,实现了简单的 get，set，其它的如有需要自己封装
+
+-   wsgate,wscli 简答的 websocket 通信
+
+### cpp
+
+-   proto 简单的读写 protobuff 协议
+
+-   thread_mutex c++11 thread 库更简单的线程
