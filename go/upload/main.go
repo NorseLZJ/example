@@ -10,35 +10,38 @@ import (
 )
 
 var (
-	port    = flag.String("p", ":6500", "upload listen port")
-	saveDir = flag.String("d", "", "upload save dir")
+	config = flag.String("c", "./config.json", "upload config")
 )
 
 func main() {
-	cwd := Cwd()
+	flag.Parse()
+	readConfig()
+	if cfg.SaveDir == "" {
+		cfg.SaveDir = Cwd()
+	}
 	router := gin.Default()
+
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
-	router.MaxMultipartMemory = 8 << 20 // 8 MiB
+	//router.MaxMultipartMemory = 8 << 20 // 8 MiB
+
 	router.POST("/upload", func(c *gin.Context) {
 		// single file
-		file, _ := c.FormFile("file")
-		sign := c.PostForm("sign")
-		if sign == "" || sign != "123456" {
+		key := c.PostForm("key")
+		if key == "" || key != cfg.Key {
 			return
 		}
 
-		dst := ""
-		if *saveDir == "" {
-			dst = fmt.Sprintf("%s/%s", cwd, file.Filename)
-		} else {
-			dst = fmt.Sprintf("%s/%s", *saveDir, file.Filename)
-		}
+		file, _ := c.FormFile("file")
+		dst := fmt.Sprintf("%s/%s", cfg.SaveDir, file.Filename)
 		// Upload the file to specific dst.
-		c.SaveUploadedFile(file, dst)
-
-		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+		err := c.SaveUploadedFile(file, dst)
+		if err != nil {
+			c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded err:%s!\n", file.Filename, err.Error()))
+			return
+		}
+		c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded success!\n", file.Filename))
 	})
-	router.Run(*port)
+	router.Run(cfg.Port)
 }
 
 func Cwd() string {
