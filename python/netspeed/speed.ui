@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="enabled">
+   <bool>false</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>112</width>
+    <height>65</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>92</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="box">
+    <item>
+     <widget class="QLabel" name="up_speed">
+      <property name="styleSheet">
+       <string notr="true">rgb:(85, 170, 0);
+font: 25 12pt &quot;Microsoft YaHei&quot;;</string>
+      </property>
+      <property name="text">
+       <string>↑ 0 KB/s      </string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="dw_speed">
+      <property name="styleSheet">
+       <string notr="true">rgb:(85, 170, 0);
+font: 25 12pt &quot;Microsoft YaHei&quot;;</string>
+      </property>
+      <property name="text">
+       <string>↓ 0 KB/s      </string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
