@@ -1,0 +1,9 @@
+{
+  "configs": [
+    {
+      "name": "FSV",
+      "dir": "I:\\Cache\\go\\bin\\",
+      "exe": "I:\\Cache\\go\\bin\\fsv.exe"
+    }
+  ]
+}
