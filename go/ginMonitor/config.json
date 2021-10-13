@@ -1,0 +1,5 @@
+{
+  "listen": ":8899",
+  "stop_ws_gate": "/root/shell/stop_wsgate.sh",
+  "start_ws_gate": "/root/shell/start_wsgate.sh"
+}
