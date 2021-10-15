@@ -25,4 +25,5 @@ if [ ${cmd} == "find" ]; then
     report="nmap_ip.txt"
     $(nmap -sP ${ip}'/24' | grep 'Nmap scan report for' | awk '{print $5}' >${report})
 fi
+
 echo "check done."
