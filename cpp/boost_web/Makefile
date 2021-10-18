@@ -150,6 +150,33 @@ main.cc.s:
 	$(MAKE) -f CMakeFiles/web.dir/build.make CMakeFiles/web.dir/main.cc.s
 .PHONY : main.cc.s
 
+web.o: web.cc.o
+
+.PHONY : web.o
+
+# target to build an object file
+web.cc.o:
+	$(MAKE) -f CMakeFiles/web.dir/build.make CMakeFiles/web.dir/web.cc.o
+.PHONY : web.cc.o
+
+web.i: web.cc.i
+
+.PHONY : web.i
+
+# target to preprocess a source file
+web.cc.i:
+	$(MAKE) -f CMakeFiles/web.dir/build.make CMakeFiles/web.dir/web.cc.i
+.PHONY : web.cc.i
+
+web.s: web.cc.s
+
+.PHONY : web.s
+
+# target to generate assembly for a file
+web.cc.s:
+	$(MAKE) -f CMakeFiles/web.dir/build.make CMakeFiles/web.dir/web.cc.s
+.PHONY : web.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,6 +189,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... web.o"
+	@echo "... web.i"
+	@echo "... web.s"
 .PHONY : help
 
 

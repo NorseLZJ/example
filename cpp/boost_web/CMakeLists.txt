@@ -6,8 +6,8 @@ project(web)
 set(CMAKE_CXX_STANDARD 17) 
 set(CMAKE_CXX_STANDARD_REQUIRED True) 
 
-link_libraries(pthread)
+link_libraries(pthread boost_coroutine)
 
 # add the executable 
-add_executable(web main.cc) 
+add_executable(web main.cc web.cc) 
 
