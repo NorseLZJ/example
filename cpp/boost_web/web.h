@@ -67,7 +67,9 @@ namespace webserver
 		static std::string path_cat(beast::string_view base, beast::string_view path);
 
 		template <class Body, class Allocator, class Send>
-		static void handle_request(beast::string_view doc_root, http::request<Body, http::basic_fields<Allocator>> &&req, Send &&send);
+		static void handle_request(beast::string_view doc_root,
+								   http::request<Body, http::basic_fields<Allocator>> &&req,
+								   Send &&send);
 
 		/**
 		 * @brief Report a failure
@@ -77,12 +79,17 @@ namespace webserver
 		/**
 	    	* @brief Handles an HTTP server connection
 		*/
-		static void do_session(beast::tcp_stream &stream, std::shared_ptr<std::string const> const &doc_root, net::yield_context yield);
+		static void do_session(beast::tcp_stream &stream,
+							   std::shared_ptr<std::string const> const &doc_root,
+							   net::yield_context yield);
 
 		/**
 	    	* @brief Handles an HTTP server connection
 		*/
-		static void do_listen(net::io_context &ioc, tcp::endpoint endpoint, std::shared_ptr<std::string const> const &doc_root, net::yield_context yield);
+		static void do_listen(net::io_context &ioc,
+							  tcp::endpoint endpoint,
+							  std::shared_ptr<std::string const> const &doc_root,
+							  net::yield_context yield);
 
 		~Web()
 		{

@@ -26,11 +26,26 @@ namespace webserver
 						   std::bind(&do_listen, std::ref(ioc), tcp::endpoint{address, port}, doc_root, std::placeholders::_1));
 
 		// Run the I/O service on the requested number of threads
+
+		std::cout << "start webserver" << std::endl;
+
 		std::vector<std::thread> v;
 		v.reserve(threads - 1);
 		for (auto i = threads - 1; i > 0; --i)
-			v.emplace_back([&ioc]
-						   { ioc.run(); });
+		{
+			v.emplace_back([&]
+						   {
+							   int pid = getpid();
+							   int ppid = getppid();
+							   std::cout << "running ..."
+										 << "current pid " << pid
+										 << "current ppid " << ppid
+										 << "address: " << address
+										 << "port:" << port
+										 << std::endl;
+							   ioc.run();
+						   });
+		}
 		ioc.run();
 
 		exit(EXIT_SUCCESS);
