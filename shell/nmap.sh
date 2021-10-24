@@ -26,4 +26,6 @@ if [ ${cmd} == "find" ]; then
     $(nmap -sP ${ip}'/24' | grep 'Nmap scan report for' | awk '{print $5}' >${report})
 fi
 
+nmap -sP 192.168.199.1/24 | grep -E -v 'Host|Starting|done' | awk '{print $6}'
+
 echo "check done."
