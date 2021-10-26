@@ -1,0 +1,110 @@
+{
+    "frames": {
+        "006720.bmp": {
+            "frame": {
+                "h": 66,
+                "idx": 0,
+                "w": 40,
+                "x": 45,
+                "y": 85
+            },
+            "sourceSize": {
+                "h": 66,
+                "w": 40
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "006721.bmp": {
+            "frame": {
+                "h": 60,
+                "idx": 0,
+                "w": 36,
+                "x": 94,
+                "y": 0
+            },
+            "sourceSize": {
+                "h": 60,
+                "w": 36
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "006722.bmp": {
+            "frame": {
+                "h": 70,
+                "idx": 0,
+                "w": 36,
+                "x": 86,
+                "y": 77
+            },
+            "sourceSize": {
+                "h": 70,
+                "w": 36
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "006723.bmp": {
+            "frame": {
+                "h": 84,
+                "idx": 0,
+                "w": 52,
+                "x": 0,
+                "y": 0
+            },
+            "sourceSize": {
+                "h": 84,
+                "w": 52
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "006724.bmp": {
+            "frame": {
+                "h": 72,
+                "idx": 0,
+                "w": 44,
+                "x": 0,
+                "y": 85
+            },
+            "sourceSize": {
+                "h": 72,
+                "w": 44
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        },
+        "006725.bmp": {
+            "frame": {
+                "h": 76,
+                "idx": 0,
+                "w": 40,
+                "x": 53,
+                "y": 0
+            },
+            "sourceSize": {
+                "h": 76,
+                "w": 40
+            },
+            "spriteSourceSize": {
+                "x": 0,
+                "y": 0
+            }
+        }
+    },
+    "meta": {
+        "image": "0_attack.png",
+        "prefix": "0_attack/"
+    }
+}
