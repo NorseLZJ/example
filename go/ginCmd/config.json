@@ -1,0 +1,13 @@
+{
+  "listen": ":8988",
+  "options": {
+    "vh5": {
+      "start": "I:\\Cache\\go\\src\\ginCmd\\start.bat",
+      "stop": "I:\\Cache\\go\\src\\ginCmd\\stop.bat"
+    },
+    "vh51": {
+      "start": "I:\\Cache\\go\\src\\ginCmd\\start.bat",
+      "stop": "I:\\Cache\\go\\src\\ginCmd\\stop.bat"
+    }
+  }
+}
