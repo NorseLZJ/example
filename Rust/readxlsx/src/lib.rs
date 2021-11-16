@@ -3,13 +3,48 @@ pub mod static_variable {
     use std::ops::Index;
     use calamine::{Reader, open_workbook, Xlsx};
 
+    fn type_load_method(c_type: &str, field_name: &str) -> (String, String) {
+        return match c_type {
+            "int" | "int32" | "int/key" | "int32/key" => {
+                let load = format!("\t\tinfo.{0} = atoi({1}({2}{0}{2}));", field_name, ELEM, CHAR_QUOTATION_MARKS);
+                let new_type = String::from("int");
+                (load, new_type)
+            }
+            "string/vec" => {
+                let load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|');", field_name, PAR_STR_TO_VEC, ELEM, CHAR_QUOTATION_MARKS);
+                let new_type = String::from("vector<int>");
+                (load, new_type)
+            }
+            "string/vecvec" => {
+                let load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');", field_name, PAR_STR_TO_VEC_VEC, ELEM, CHAR_QUOTATION_MARKS);
+                let new_type = String::from("vector<vector<int>>");
+                (load, new_type)
+            }
+            "string/map" => {
+                let load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');", field_name, PAR_STR_TO_MAP, ELEM, CHAR_QUOTATION_MARKS);
+                let new_type = String::from("map<int,int>");
+                (load, new_type)
+            }
+            "string/map64" => {
+                let load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');", field_name, PAR_STR_TO_MAP, ELEM, CHAR_QUOTATION_MARKS);
+                let new_type = String::from("map<int,UINT64>");
+                (load, new_type)
+            }
+            _ => {
+                let load = String::from("");
+                let new_type = String::from("");
+                (load, new_type)
+            }
+        };
+    }
+
     const BRACES_LEFT: &'static str = "{";
     const BRACES_RIGHT: &'static str = "}";
     const CHAR_QUOTATION_MARKS: &'static char = &'"';
-    const ELEM_ATTRIBUTE: &'static str = "elem->Attribute";
-    const PARSE_STRING_TO_VECTOR: &'static str = "ParseStringToVector";
-    const PARSE_STRING_TO_VECTOR_VECTOR: &'static str = "ParseStringToVectorVector";
-    const PARSE_STRING_TO_MAP: &'static str = "ParseStringToMap";
+    const ELEM: &'static str = "elem->Attribute";
+    const PAR_STR_TO_VEC: &'static str = "ParseStringToVector";
+    const PAR_STR_TO_VEC_VEC: &'static str = "ParseStringToVectorVector";
+    const PAR_STR_TO_MAP: &'static str = "ParseStringToMap";
 
     pub struct CppConfig {
         path: String,
@@ -26,39 +61,6 @@ pub mod static_variable {
         key: String,
     }
 
-    fn type_load_method(c_type: &str, field_name: &str) -> (String, String) {
-        let mut load = String::from("");
-        let mut new_type = String::from("");
-        if c_type == "int" || c_type == "int32" || c_type == "int/key" || c_type == "int32/key" {
-            load = format!("\t\tinfo.{0} = atoi({1}({2}{0}{2}));", field_name, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("int");
-        }
-        if c_type == "string" {
-            load = format!("\t\tinfo.{0} = {1}({2}{0}{2});", field_name, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("string");
-        }
-        if c_type == "string/vec" {
-            load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|');",
-                           field_name, PARSE_STRING_TO_VECTOR, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("vector<int>");
-        }
-        if c_type == "string/vecvec" {
-            load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');",
-                           field_name, PARSE_STRING_TO_VECTOR_VECTOR, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("vector<vector<int>>");
-        }
-        if c_type == "string/map" {
-            load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');",
-                           field_name, PARSE_STRING_TO_MAP, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("map<int,int>");
-        }
-        if c_type == "string/map64" {
-            load = format!("\t\tinfo.{0} = {1}({2}({3}{0}{3}), info.{0}, '|;');",
-                           field_name, PARSE_STRING_TO_MAP, ELEM_ATTRIBUTE, CHAR_QUOTATION_MARKS);
-            new_type = String::from("map<int,UINT64>");
-        }
-        return (load, new_type);
-    }
 
     impl CppConfig {
         pub fn new(path: &String) -> Self {
@@ -115,6 +117,7 @@ pub mod static_variable {
             self.write_h();
             self.write_cpp();
         }
+
         /// init 根据名字初始化一些公共变量
         fn some_setting(&mut self, name: &str) {
             self.conf_name = format!("{}Conf", name);
@@ -127,11 +130,13 @@ pub mod static_variable {
 
             self.set_define_name(name);
         }
+
         fn try_set_key(&mut self, c_type: &str, field_name: &str) {
             if c_type == "int/key" || c_type == "int32/key" {
                 self.key = String::from(field_name);
             }
         }
+
         fn set_define_name(&mut self, name: &str) {
             let mut cur: String = String::from("");
             let mut g_idx = 0;
@@ -157,9 +162,7 @@ pub mod static_variable {
         }
 
         fn set_struct(&mut self, fields: &String) {
-            let cstr = format!("struct {} {} {} \n{};",
-                               self.conf_name, BRACES_LEFT, fields, BRACES_RIGHT).to_string();
-
+            let cstr = format!("struct {} {} {} \n{};", self.conf_name, BRACES_LEFT, fields, BRACES_RIGHT).to_string();
             self.struct_str = cstr;
         }
 
