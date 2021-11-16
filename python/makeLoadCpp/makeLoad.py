@@ -98,10 +98,12 @@ def read_struct():
         cp_t_name = t_name
         t_name = t_name + ";"
         t_explain = explain[idx]
+        t_explain = str(t_explain).replace("\n", "")
+        t_explain = str(t_explain).replace("\r\n", "")
 
         set_map_key_word(t_type, cp_t_name)
 
-        big_type = s.type_dict[t_type]
+        big_type = s.get_type_method(t_type)
         if big_type is None:
             print("UnKnow Type")
             exit(1)

@@ -36,32 +36,34 @@ h_file_head = """#ifndef %s
 
 #endif """
 
-# type dict
-type_dict = {
-    'int':
-        ['int', 'atoi'],
 
-    'int32':
-        ['int', 'atoi'],
+def get_type_method(c_type: str):
+    if c_type in ('int', 'int32', 'int/key', 'int32/key'):
+        return ['int', 'atoi']
 
-    'int/key':
-        ['int', 'atoi'],
+    if c_type == 'string':
+        return ['string', ''],
 
-    'int32/key':
-        ['int', 'atoi'],
+    if c_type == 'string/vec':
+        return ['vector<int>', 'ParseStringToVector'],
 
-    'string':
-        ['string', ''],
+    if c_type == 'string/vecvec':
+        return ['vector<vector<int>>', 'ParseStringToVectorVector'],
 
-    'string/vec':
-        ['vector<int>', 'ParseStringToVector'],
+    if c_type == 'string/map':
+        return ['map<int,int>', 'ParseStringToMap'],
 
-    'string/vecvec':
-        ['vector<vector<int>>', 'ParseStringToVectorVector'],
+    if c_type == 'string/map64':
+        return ['map<int,UINT64>', 'ParseStringToMap'],
 
-    'string/map':
-        ['map<int,int>', 'ParseStringToMap'],
-}
+    return None
+
+
+LoadStrFmt = """info.%s = elem->Attribute("%s");"""
+LoadIntFmt = """info.%s = atoi(elem->Attribute("%s"));"""
+LoadVecFmt = """ParseStringToVector(elem->Attribute("%s"), info.%s, '|');"""
+LoadVecVecFmt = """ParseStringToVectorVector(elem->Attribute("%s"), info.%s, "|;");"""
+LoadMapFmt = """ParseStringToMap(elem->Attribute("%s"), info.%s, "|;");"""
 
 # 大小写字符判断
 upper_cases = {
@@ -92,12 +94,6 @@ upper_cases = {
     "Y": True,
     "Z": True,
 }
-
-LoadStrFmt = """info.%s = elem->Attribute("%s");"""
-LoadIntFmt = """info.%s = atoi(elem->Attribute("%s"));"""
-LoadVecFmt = """ParseStringToVector(elem->Attribute("%s"), info.%s, '|');"""
-LoadVecVecFmt = """ParseStringToVectorVector(elem->Attribute("%s"), info.%s, "|;");"""
-LoadMapFmt = """ParseStringToMap(elem->Attribute("%s"), info.%s, "|;");"""
 
 # cpp
 # include 单例　init函数
