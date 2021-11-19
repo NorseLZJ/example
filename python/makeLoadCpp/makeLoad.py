@@ -107,6 +107,7 @@ def read_struct():
         if big_type is None:
             print("UnKnow Type")
             exit(1)
+        print(big_type)
         t_type = big_type[0]
         load_type = big_type[1]
         if idx == 0:
@@ -146,7 +147,7 @@ def write_load_field(load_type: str, cp_t_name: str):
 
 
 def set_map_key_word(t_type: str, key_word: str):
-    if t_type == 'int/key':
+    if t_type == 'int/key' or t_type == 'int32/key':
         global MapKeyWord
         MapKeyWord = key_word
 

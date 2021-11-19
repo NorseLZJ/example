@@ -42,19 +42,19 @@ def get_type_method(c_type: str):
         return ['int', 'atoi']
 
     if c_type == 'string':
-        return ['string', ''],
+        return ['string', '']
 
     if c_type == 'string/vec':
-        return ['vector<int>', 'ParseStringToVector'],
+        return ['vector<int>', 'ParseStringToVector']
 
     if c_type == 'string/vecvec':
-        return ['vector<vector<int>>', 'ParseStringToVectorVector'],
+        return ["vector<vector<int>>", "ParseStringToVectorVector"]
 
     if c_type == 'string/map':
-        return ['map<int,int>', 'ParseStringToMap'],
+        return ['map<int,int>', 'ParseStringToMap']
 
     if c_type == 'string/map64':
-        return ['map<int,UINT64>', 'ParseStringToMap'],
+        return ['map<int,UINT64>', 'ParseStringToMap']
 
     return None
 
