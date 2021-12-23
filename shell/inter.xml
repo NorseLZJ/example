@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/local/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.92 scan initiated Sun Oct 24 12:16:02 2021 as: nmap -sP -oX inter.xml 192.168.199.1/24 -->
+<nmaprun scanner="nmap" args="nmap -sP -oX inter.xml 192.168.199.1/24" start="1635048962" startstr="Sun Oct 24 12:16:02 2021" version="7.92" xmloutputversion="1.05">
+<verbose level="0"/>
+<debugging level="0"/>
+<host><status state="up" reason="syn-ack" reason_ttl="0"/>
+<address addr="192.168.199.1" addrtype="ipv4"/>
+<hostnames>
+<hostname name="Hiwifi.lan" type="PTR"/>
+</hostnames>
+<times srtt="3606" rttvar="3253" to="100000"/>
+</host>
+<host><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="192.168.199.173" addrtype="ipv4"/>
+<hostnames>
+<hostname name="HONOR_9X-fec27685db56e736.lan" type="PTR"/>
+</hostnames>
+<times srtt="118236" rttvar="78084" to="430572"/>
+</host>
+<host><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="192.168.199.213" addrtype="ipv4"/>
+<hostnames>
+<hostname name="fs.lan" type="PTR"/>
+</hostnames>
+<times srtt="4670" rttvar="5000" to="100000"/>
+</host>
+<host><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="192.168.199.219" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<times srtt="63870" rttvar="36832" to="211198"/>
+</host>
+<host><status state="up" reason="conn-refused" reason_ttl="0"/>
+<address addr="192.168.199.235" addrtype="ipv4"/>
+<hostnames>
+<hostname name="MacOS.lan" type="PTR"/>
+</hostnames>
+<times srtt="10196" rttvar="15292" to="100000"/>
+</host>
+<runstats><finished time="1635049007" timestr="Sun Oct 24 12:16:47 2021" summary="Nmap done at Sun Oct 24 12:16:47 2021; 256 IP addresses (5 hosts up) scanned in 44.81 seconds" elapsed="44.81" exit="success"/><hosts up="5" down="251" total="256"/>
+</runstats>
+</nmaprun>
