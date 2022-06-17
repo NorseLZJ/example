@@ -1,55 +1,12 @@
 import os.path
 
-import akshare as ak
-import talib
-import numpy
-from datetime import datetime, date
-import datetime as dt
-
-
-def get_name_akshare(code: str):
-    if code[0:2] == "00" or code[0:2] == "30":  # sz
-        return format("sz%s" % code)
-    return format("sh%s" % code)
-
-
-def day_60_plus(x):
-    """
-    60天线是否上升趋势
-    :return:
-    """
-    max_idx = len(x) - 1
-    stop_idx = max_idx - 10
-    if stop_idx > 0:
-        while max_idx > stop_idx:
-            if not numpy.isnan(x[max_idx]) and not numpy.isnan(x[max_idx - 1]):
-                if x[max_idx] >= x[max_idx - 1]:
-                    max_idx -= 1
-                else:
-                    return False
-            else:
-                return False
-    return True
+from comm import *
 
 
 def check_avg(_symbol: str) -> bool:
-    td = dt.date.today()
-    end_date = str(td).replace('-', '')
-    timestamp = datetime.timestamp(datetime.now())
-    dt_object = datetime.fromtimestamp(int(timestamp) - 240 * 86400)  # 100天左右的数据
-    start_date = (str(dt_object).split(' ')[0]).replace(' ', '')
-
-    name = get_name_akshare(_symbol)
-    if name == '':
+    df = get_daily_date(_symbol)
+    if df is None:
         return False
-
-    # print('get code %s\n' % name)
-    try:
-        df = ak.stock_zh_a_daily(name, start_date=start_date, end_date=end_date)
-    except Exception as e:
-        print("get stock[%s] err:%s" % (_symbol, e))
-        return
-
     c_date = df['date']
     c_close = df['close']
     prices = []
@@ -57,33 +14,20 @@ def check_avg(_symbol: str) -> bool:
         prices.append(float(c_close[i]))
 
     xx = numpy.array(prices)
-    all_nan = True
-    for vv in xx:
-        if not numpy.isnan(vv):
-            all_nan = False
-            break
-    if all_nan is True:
+    if numpy.isnan(xx[len(xx) - 1]):  # 最后一个数据是nan，那前边的就不处理了
         return False
 
     prices = numpy.around(xx, 2)
-    avg5 = talib.SMA(xx, timeperiod=5)
-    avg10 = talib.SMA(xx, timeperiod=10)
-    avg20 = talib.SMA(xx, timeperiod=20)
-    avg60 = talib.SMA(xx, timeperiod=60)
+    _, _, avg20, avg60 = get_avg_list(xx, c_date)
 
-    avg5 = numpy.around(avg5, 2)
-    avg10 = numpy.around(avg10, 2)
-    avg20 = numpy.around(avg20, 2)
-    avg60 = numpy.around(avg60, 2)
-    i = len(avg5) - 1
-    a5 = avg5[i] if not numpy.isnan(avg5[i]) else 0
-    a10 = avg10[i] if not numpy.isnan(avg10[i]) else 0
-    a20 = avg20[i] if not numpy.isnan(avg20[i]) else 0
-    a60 = avg60[i] if not numpy.isnan(avg60[i]) else 0
+    # 拿最后一天的数据就可以了
+    key = c_date[len(c_date) - 1]
+    a20 = avg20[key]
+    a60 = avg60[key]
     cur_price = prices[len(prices) - 1]
 
     # TODO 当前股价在60,20天均线以上 但是超过60均线不足5%
-    if a60 != 0 and a20 != 0 and a10 != 0 and a5 != 0:
+    if a60 != 0 and a20 != 0:
         if (cur_price > a60) and (cur_price > a20):
             ret = ((cur_price - a60) / a60 * 100)
             if ret < 5.0:
