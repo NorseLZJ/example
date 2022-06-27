@@ -87,7 +87,7 @@ def get_params(_df, idx):
     params
         _df pandas.DataFrame
         idx _df index
-    return (date,open,high,low,low,close,dif,dea,macd,ma5,ma10,ma20,ma60,ma120) 
+    return (date,open,high,low,close,dif,dea,macd,ma5,ma10,ma20,ma60,ma120) 
     """
     if idx > len(_df):
         return None
