@@ -1,43 +1,19 @@
 import os.path
-
 import akshare as ak
 import talib
 import numpy
 from datetime import datetime, date
 import datetime as dt
 import pandas as pd
-
-
-def get_name_akshare(code: str):
-    if code[0:2] == "00" or code[0:2] == "30":  # sz
-        return format("sz%s" % code)
-    return format("sh%s" % code)
-
-
-def day_60_plus(x):
-    """
-    60天线是否上升趋势
-    :return:
-    """
-    max_idx = len(x) - 1
-    stop_idx = max_idx - 10
-    if stop_idx > 0:
-        while max_idx > stop_idx:
-            if not numpy.isnan(x[max_idx]) and not numpy.isnan(x[max_idx - 1]):
-                if x[max_idx] >= x[max_idx - 1]:
-                    max_idx -= 1
-                else:
-                    return False
-            else:
-                return False
-    return True
+from comm import *
 
 
 def check_avg(_symbol: str) -> bool:
     td = dt.date.today()
     end_date = str(td).replace('-', '')
     timestamp = datetime.timestamp(datetime.now())
-    dt_object = datetime.fromtimestamp(int(timestamp) - 240 * 86400)  # 100天左右的数据
+    dt_object = datetime.fromtimestamp(int(timestamp) -
+                                       240 * 86400)  # 100天左右的数据
     start_date = (str(dt_object).split(' ')[0]).replace(' ', '')
 
     name = get_name_akshare(_symbol)
@@ -46,7 +22,9 @@ def check_avg(_symbol: str) -> bool:
 
     # print('get code %s\n' % name)
     try:
-        df = ak.stock_zh_a_daily(name, start_date=start_date, end_date=end_date)
+        df = ak.stock_zh_a_daily(name,
+                                 start_date=start_date,
+                                 end_date=end_date)
     except Exception as e:
         print("get stock[%s] err:%s" % (_symbol, e))
         return
@@ -96,7 +74,8 @@ def get_day_data(_code: str) -> bool:
     td = dt.date.today()
     end_date = str(td).replace('-', '')
     timestamp = datetime.timestamp(datetime.now())
-    dt_object = datetime.fromtimestamp(int(timestamp) - 240 * 86400)  # 100天左右的数据
+    dt_object = datetime.fromtimestamp(int(timestamp) -
+                                       240 * 86400)  # 100天左右的数据
     start_date = (str(dt_object).split(' ')[0]).replace(' ', '')
 
     name = get_name_akshare(_code)
@@ -146,17 +125,8 @@ def get_day_data(_code: str) -> bool:
     return False
 
 
-def get_industry(_symbol: str):
-    vv = ak.stock_individual_info_em(_symbol)
-    item = vv['item']
-    value = vv['value']
-    for i in range(len(item)):
-        if item[i] == '行业':
-            return value[i]
-    return 'empty'
-
-
 class Stock(object):
+
     def __init__(self, _symbol: str, _name: str, _price):
         self.symbol = _symbol
         self.name = _name
@@ -168,6 +138,7 @@ class Stock(object):
 
 def get_by_fund_list(_symbol: str):
     xx = ak.stock_report_fund_hold_detail(symbol=_symbol)
+    ak.fund_portfolio_hold_em()
     codes = []
     names = []
 
@@ -179,10 +150,8 @@ def get_by_fund_list(_symbol: str):
 
 
 if __name__ == "__main__":
-    # print(get_day_data('600891'))
-
-    if not os.path.exists("cache"):
-        os.mkdir("cache")
+    #if not os.path.exists("cache"):
+    #    os.mkdir("cache")
 
     industry_map = {}
     xx = get_by_fund_list('510300')
@@ -207,64 +176,3 @@ if __name__ == "__main__":
         all_txt += format("%s ---------------\n%s" % (k, cent))
     with open('cache.txt', 'w', encoding='utf8') as f:
         f.write(all_txt)
-
-"""
-    v = ak.stock_rank_xstp_ths(symbol="20日均线")
-
-    simple = v['股票简称']
-    last_prices = v['最新价']
-    txt = ''
-    industry_map = {}
-    for idx in range(len(simple)):
-        last_price = last_prices[idx]
-        symbol = str(simple[idx])
-        if symbol.find("ST") == -1 and symbol.find("退市") == -1 and last_price >= 5:
-            # print(simple[idx])
-            code = v['股票代码'][idx]
-            prefix = code[0:3]
-            if prefix in ('000', '300', '600') and check_avg(code) is True:
-                industry = get_industry(code)
-                if industry_map.get(industry) is None:
-                    industry_map[industry] = [Stock(symbol, code, last_price)]
-                else:
-                    industry_map[industry].append(Stock(symbol, code, last_price))
-    all_txt = ''
-    for k, v in industry_map.items():
-        cent = ''
-        for x in v:
-            cent += x.info()
-        all_txt += format("%s ---------------\n%s" % (k, cent))
-    with open('cache.txt', 'w', encoding='utf8') as f:
-        f.write(all_txt)
-       
-"""
-
-"""
-        # v = ak.stock_rank_cxsl_ths()
-        ''' 
-         v = ak.stock_rank_cxfl_ths()
-        
-         simple = v['股票简称']
-         txt = ''
-         for idx in range(len(simple)):
-             if str(simple[idx]).find("ST") == -1:
-                 # print(simple[idx])
-                 code = v['股票代码'][idx]
-                 prefix = code[0:3]
-                 if prefix in ('000', '300', '600') and get_day_data(code) is True:
-                     txt += format('%s  %s\n' % (v['股票代码'][idx], simple[idx]))
-        
-         print(txt)
-         '''
-
-        '''
-        xx = ak.stock_info_a_code_name()
-        codes = xx['code']
-        with open('see.txt', 'w') as f:
-            for i in codes:
-                if get_day_data(str(i)) is True:
-                    f.write(format("%s\n" % str(i)))
-                    f.flush()
-        '''
-
-"""
