@@ -86,6 +86,15 @@ def get_minute_data(_symbol: str, period: str):
         return None
 
 
+def get_params_by_key(_df, key_list, idx):
+    if idx > len(_df):
+        return None
+    ret = []
+    for key in key_list:
+        ret.append(_df.loc[idx][key])
+    return ret
+
+
 def get_params(_df, idx):
     """
     params
