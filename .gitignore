@@ -10,7 +10,7 @@ gen
 get_code.code-workspace
 *.run
 
-.vscode
+
 cmd/fileserver/fileserver
 cmd/jjson/jjson
 cmd/getcode/getcode
