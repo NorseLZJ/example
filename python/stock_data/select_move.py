@@ -1,9 +1,6 @@
 from comm import *
 import numpy as np
-from redis import *
 from datetime import datetime as dt
-
-r = Redis(host="127.0.0.1", port=6379, decode_responses=True)
 
 
 def check_avg(_symbol: str) -> bool:
@@ -16,9 +13,7 @@ def check_avg(_symbol: str) -> bool:
     if len(cp_df) <= 0:
         return False
 
-    (_, _, _, _, close, _, _, _, _, _, ma20, ma60, _) = get_params(
-        cp_df, len(cp_df) - 1
-    )
+    (_, _, _, _, close, _, _, _, _, _, ma20, ma60, _) = get_params(cp_df, len(cp_df) - 1)
 
     # TODO 当前股价在60,20天均线以上 但是超过60均线不足5%
     if ma60 != 0 and ma20 != 0:
@@ -51,14 +46,7 @@ def calc(symbol: str, price: float, code: str):
 
 
 if __name__ == "__main__":
-    key = format("xstp_%s" % (str(dt.today()).split(" ")[0]))
-    data = r.get(key)
-    v = None
-    if data is None:
-        v = ak.stock_rank_xstp_ths(symbol="20日均线")
-        r.set(key, v.to_json())
-    else:
-        v = pd.read_json(data)
+    v = ak.stock_rank_xstp_ths(symbol="20日均线")
     v["buy"] = v.apply(lambda x: calc(x["股票简称"], x["最新价"], x["股票代码"]), axis=1)
     v["industry"] = v.apply(lambda x: get_industry(x["股票代码"]), axis=1)
     v.dropna(inplace=True, axis=0)
