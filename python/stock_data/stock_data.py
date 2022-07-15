@@ -3,21 +3,12 @@ get date from network
 """
 import akshare as ak
 import pandas as pd
-import talib
-import numpy
 from select_move import *
-import comm as cm
+from comm import *
 
-''' stock state'''
+""" stock state"""
 purchase_ing = 1
 sellout_ing = 2
-
-ONE_DAY_FOUR_LINE = 4
-
-## 使用talib计算MACD的参数
-SHORT_WIN = 12  # 短期EMA平滑天数
-LONG_WIN = 26  # 长期EMA平滑天数
-MACD_WIN = 20  # DEA线平滑天数
 
 
 class SubPrice(object):
@@ -47,99 +38,49 @@ class SixtyMinter(object):
             return format("%s  买入持有   %f\n" % (self.date, self.dif)), self.state, self.price, self.date, self.next_date
         else:
             return format("%s  卖出空仓   %f\n" % (self.date, self.dif)), self.state, self.price, self.date, self.next_date
-        return '-' * 10
+        return "-" * 10
 
 
 class StockData(object):
     def __init__(self, code: str):
         self.code = code
         self.sixtyList = []
-        self.content = ''
-        self.bill_cent = ''
+        self.content = ""
+        self.bill_cent = ""
         self.opt_list = []
-        self.avg60 = {}
-        self.avg_calc()
+        self.df = None
 
         # 日线数据
         self.minute60()
-
-    def get_avg(self, _date):
-        if self.avg60 is None:
-            return None
-        key = str(_date).split(' ')[0]
-        xx = self.avg60.get(key)
-        if xx == 0.0:
-            return None
-        return xx
-
-    def avg_calc(self):
-        df = get_daily_date(self.code)
-        if df is None:
-            return False
-        c_date = df['date']
-        c_close = df['close']
-        prices = []
-        for i in range(len(c_date)):
-            prices.append(float(c_close[i]))
-
-        xx = numpy.array(prices)
-        if numpy.isnan(xx[len(xx) - 1]):  # 最后一个数据是nan，那前边的就不处理了
-            return False
-
-        # prices = numpy.around(xx, 2)
-        _, _, _, self.avg60 = get_avg_list(xx, c_date)
-
-    def minute60(self):
-        df = ak.stock_zh_a_minute(get_name_akshare(self.code), period='60')
-        days = df['day']
-        closes = df['close']
-        f_closes = []
-        for i in closes:
-            f_closes.append(float(i))
-
-        xx = numpy.array(f_closes)
-        vv = talib.MACD(xx, fastperiod=SHORT_WIN, slowperiod=LONG_WIN, signalperiod=MACD_WIN)
-        v1 = numpy.around(vv[0], 3)
-        i = 0
-        while True:
-            if numpy.isnan(v1[i]):
-                i += 1
-            else:
-                break
-
-        # vv = pd.DataFrame(v1[i:], days[i:], f_closes[i:])
-        # self.calc(vv, vv, vv)
-        d_t = type(days[i:])
-        self.calc(v1[i:], days[i:], f_closes[i:])
-
-    def calc(self, dif, dates, prices_close):
-        for i in range(len(dif)):
-            if i <= 0 or i > (len(dif) - 2):
-                continue  # start or end
-
-            next_date = dates[i + 1]
-            cur_date = dates[i]
-            prev_dif = dif[i - 1]
-            cur_dif = dif[i]
-            next_close = prices_close[i + 1]
-            cur_close = float(prices_close[i])
-            avg60 = self.get_avg(cur_date)
-
-            if avg60 is None:
-                continue
-            # TODO 条件，判定买卖关键位置
-            if cur_dif > prev_dif and cur_close >= avg60:
-                '''当前大于前一个，谷底，操作后一个到后一个+1'''
-                self.sixtyList.append(SixtyMinter(cur_date, purchase_ing, cur_dif, next_close, next_date))
-            elif cur_dif < prev_dif:
-                '''当前小于前一个,谷顶'''
-                self.sixtyList.append(SixtyMinter(cur_date, sellout_ing, cur_dif, next_close, next_date))
-
         self.info_list()
         self.info_list_rever()
 
+    def minute60(self):
+        self.df = get_minute_data(self.code, "60")
+        self.df = collect_data_by_df(self.df)
+        self.df.dropna(inplace=True)
+        self.df.reset_index(inplace=True)
+        print(self.df.head(10))
+        for i in range(len(self.df)):
+            if i <= 0 or i > (len(self.df) - 2):
+                continue  # start or end
+
+            pv = get_params_by_key(self.df, ["close", "dif", "dea"], i - 1)
+            pclose, pdif, pdea = (pv[0], pv[1], pv[2])
+            cv = get_params_by_key(self.df, ["close", "dif", "dea", "ma60", "day"], i)
+            cclose, cdif, cdea, cma60, cday = (cv[0], cv[1], cv[2], cv[3], cv[4])
+            nv = get_params_by_key(self.df, ["close", "dif", "dea", "day"], i + 1)
+            nclose, ndif, ndea, nday = (nv[0], nv[1], nv[2], nv[3])
+
+            if cdif > pdif and cclose >= cma60:
+                """当前大于前一个，谷底，操作后一个到后一个+1"""
+                self.sixtyList.append(SixtyMinter(cday, purchase_ing, cdif, nclose, nday))
+            elif cdif < pdif:
+                """当前小于前一个,谷顶"""
+                self.sixtyList.append(SixtyMinter(cday, sellout_ing, cdif, nclose, nday))
+
     def info_list_rever(self):
-        txt = ''
+        txt = ""
         for v in reversed(self.sixtyList):
             content, _, _, _, _ = v.info_six_minter()
             txt += content
@@ -161,12 +102,12 @@ class StockData(object):
                 price1 = price
                 date1 = c_date
             elif prev_state == purchase_ing and state == sellout_ing:
-                if price1 != 0 and date1 != '':
+                if price1 != 0 and date1 != "":
                     self.opt_list.append(SubPrice(price1, date1, price, c_date))
             prev_state = state
 
         # 买卖操作收益
-        bill_txt = ''
+        bill_txt = ""
         all_money = 0
         for v in self.opt_list:
             val = v.price2 - v.price1
@@ -184,4 +125,11 @@ class StockData(object):
         self.bill_cent += format("总收益:%d" % all_money)
 
     def get_content(self):
-        return self.content, self.bill_cent
+        return (self.content, self.bill_cent)
+
+
+if __name__ == "__main__":
+    s = StockData("002424")
+    (opt, bill) = s.get_content()
+    print(opt)
+    print(bill)

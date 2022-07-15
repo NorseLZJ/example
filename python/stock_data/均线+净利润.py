@@ -97,20 +97,23 @@ def calc(symbol: str, code: str):
 
 def clean_signal(name: str):
     if name.find("ST") != -1:
-        return True
+        return np.nan
 
     if name.find("退") != -1:
-        return True
+        return np.nan
 
-    return False
+    return 1
 
 
 def clean_data(df: pd.DataFrame, type=""):
     df["del"] = df.apply(lambda x: clean_signal(x["股票简称"]), axis=1)
-    del_idx = df[df["del"] == True].index
-    df.drop(del_idx, inplace=True)
-    df.drop(columns=["del", "序号"], inplace=True, axis=1)
+
+    # del_idx = df[df["del"] == True].index
+    # df.drop(del_idx, inplace=True)
+
     df.dropna(inplace=True, axis=1)
+    df.drop(columns=["序号"], inplace=True, axis=1)
+
     if type == "zcfz":
         pass
     elif type == "lrb":
