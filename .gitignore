@@ -9,6 +9,8 @@ out
 gen
 get_code.code-workspace
 *.run
+*__pycache__
+*target
 
 
 cmd/fileserver/fileserver
