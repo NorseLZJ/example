@@ -1,23 +1,20 @@
 """
 获取数据
-    资产负债
     利润
-    现金流量
 
 默认按照最新的日期获取
 
 *****************************
 
-可能一个月运行一次就可以了
-
 文档地址:
     https://www.akshare.xyz/tutorial.html
 
-目前只做了净利润+均线选股
-净利润同比为正,均线5,10,20,60多头排列
+净利润同比为正,
+近1年下跌超过50%
 
 """
 
+from tracemalloc import start
 import akshare as ak
 import pandas as pd
 import os
@@ -60,9 +57,6 @@ def check_ma60(df: pd.DataFrame):
 
 
 def calc(symbol: str, code: str):
-    if symbol.find("ST") != -1 or symbol.find("退") != -1:
-        return np.nan
-
     prefix = code[0:3]
     if prefix not in ("000", "300", "600"):
         return np.nan
@@ -77,31 +71,37 @@ def calc(symbol: str, code: str):
     if len(df) <= 0:
         return np.nan
 
-    (_, _, _, _, _, _, _, _, ma5, ma10, ma20, ma60) = get_params(df, len(df) - 1)
-    if ma5 == 0.0 or ma10 == 0.0 or ma20 == 0.0 or ma60 == 0.0:
-        return np.nan
-    if ma5 < ma10 or ma5 < ma20 or ma5 < ma60:
-        return np.nan
-    if ma10 < ma20 or ma10 < ma60:
-        return np.nan
-    if ma20 < ma60:
-        return np.nan
-    if not (ma5 >= ma10 > ma20 > ma60):
-        return np.nan
-    if check_ma60(df) is False:
+    #print(df.head(5))
+    #print(df.tail(5))
+
+    max_idx = len(df) - 1
+    if max_idx < 150:  # 股票日销不到120个，太少
         return np.nan
 
-    print("手工校验下:%s" % code)
-    return 1
+    count = 0
+    found = False
+    while max_idx >= 0:
+        t_val = df.iloc[max_idx]["close"]
+        t_ma60 = df.iloc[max_idx]["ma60"]
+        if t_val < t_ma60:
+            count += 1
+        elif count >= 150:
+            found = True
+            break
+        else:
+            count = 0
+        max_idx -= 1
+
+    if found:
+        print("手工校验下:%s" % code)
+        return 1
+    else:
+        return np.nan
 
 
 if __name__ == "__main__":
     if not os.path.exists("data"):
         os.mkdir("data")
-
-    # df = ak.stock_zcfz_em()
-    # df = clean_data(df, "zcfz")
-    # df.to_excel("data/资产负债.xlsx", index=False)
 
     df2 = ak.stock_lrb_em()
     df2 = clean_data_by_name(df2, "lrb")
@@ -112,9 +112,5 @@ if __name__ == "__main__":
     df2.drop(columns=["buy"], axis=1, inplace=True)
     df2.reset_index(inplace=True)
 
-    out_file = format("out/lrb%s.xlsx" % (time_prefix))
+    out_file = format("out/lrb_超跌%s.xlsx" % (time_prefix))
     df2.to_excel(out_file, index=False)
-
-    # df3 = ak.stock_xjll_em()
-    # df3 = clean_data(df3, "xjll")
-    # df3.to_excel("data/现金流量.xlsx", index=False)

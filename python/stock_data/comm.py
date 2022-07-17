@@ -74,7 +74,7 @@ def get_daily_data(_symbol: str):
     td = dt.date.today()
     end_date = str(td).replace("-", "")
     timestamp = datetime.timestamp(datetime.now())
-    dt_object = datetime.fromtimestamp(int(timestamp) - 356 * 86400)
+    dt_object = datetime.fromtimestamp(int(timestamp) - 356 * 2 * 86400)
     start_date = (str(dt_object).split(" ")[0]).replace(" ", "")
     name = get_name_akshare(_symbol)
     if name == "":
@@ -171,3 +171,34 @@ def collect_data_by_df(_df):
     _df.insert(loc=5, column="ma60", value=ma60)
 
     return _df
+
+
+def clean_data_by_name(df: pd.DataFrame, type: str) -> pd.DataFrame:
+    def clean_signal(name: str):
+        if name.find("ST") != -1:
+            return np.nan
+
+        if name.find("退") != -1:
+            return np.nan
+
+        return 1
+
+    df["del"] = df.apply(lambda x: clean_signal(x["股票简称"]), axis=1)
+
+    # del_idx = df[df["del"] == True].index
+    # df.drop(del_idx, inplace=True)
+
+    df.dropna(inplace=True, axis=1)
+    df.drop(columns=["序号"], inplace=True, axis=1)
+
+    if type == "zcfz":
+        pass
+    elif type == "lrb":
+        di = df[df["净利润同比"] <= 0.0].index
+        df.drop(di, inplace=True)
+        df["industry"] = df.apply(lambda x: get_industry(x["股票代码"], x["股票简称"]), axis=1)
+        df.sort_values(by=["industry", "净利润同比"], inplace=True, ignore_index=True, ascending=False)
+    elif type == "xjll":
+        pass
+    df.reset_index(inplace=True)
+    return df
