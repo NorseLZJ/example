@@ -202,3 +202,7 @@ def clean_data_by_name(df: pd.DataFrame, type: str) -> pd.DataFrame:
         pass
     df.reset_index(inplace=True)
     return df
+
+
+def get_stock_data_file(symbol: str):
+    return format("stock_data/%s.csv" % (symbol))
