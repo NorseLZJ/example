@@ -40,12 +40,13 @@ def calc(_df):
         if idx < 1 or idx >= len(_df) - 1:
             idx += 1
             continue
-        pv = get_params_by_key(_df, ["close", "dif", "dea"], idx - 1)
-        pclose, pdif, pdea = (pv[0], pv[1], pv[2])
-        cv = get_params_by_key(_df, ["close", "dif", "dea"], idx)
-        cclose, cdif, cdea = (cv[0], cv[1], cv[2])
-        nv = get_params_by_key(_df, ["close", "dif", "dea"], idx + 1)
-        nclose, ndif, ndea = (nv[0], nv[1], nv[2])
+
+        pv = df.loc[idx - 1]
+        pdif = pv[k("dif")]
+        cv = df.loc[idx]
+        cdif = cv[k("dif")]
+        nv = df.loc[idx]
+        ndif = nv[k("dif")]
         if p_state == s_sellout:
             if is_bottom(pdif, cdif, ndif):
                 _df.loc[idx, "buy"] = s_buy
@@ -73,9 +74,7 @@ if __name__ == "__main__":
 
     df.to_excel("opt.xlsx", index=False, startrow=3, startcol=1)
 
-    my_color = mpf.make_marketcolors(
-        up="red", down="green", edge="inherit", volume="inherit"
-    )
+    my_color = mpf.make_marketcolors(up="red", down="green", edge="inherit", volume="inherit")
     my_stype = mpf.make_mpf_style(marketcolors=my_color)
 
     datetime_series = pd.to_datetime(df["date"])
@@ -89,12 +88,8 @@ if __name__ == "__main__":
         # mpf.make_addplot(df['signal_long'], scatter=True, markersize=5, marker="^", color='r'),
         # mpf.make_addplot(df['signal_short'], scatter=True, markersize=5, marker="s", color='g')
         # mpf.make_addplot(buy, scatter=True, markersize=50, marker=r'$\Uparrow$', color='green')
-        mpf.make_addplot(
-            buy, scatter=True, markersize=50, marker=r"$\Uparrow$", color="red"
-        ),
-        mpf.make_addplot(
-            sellout, scatter=True, markersize=50, marker=r"$\Downarrow$", color="green"
-        ),
+        mpf.make_addplot(buy, scatter=True, markersize=50, marker=r"$\Uparrow$", color="red"),
+        mpf.make_addplot(sellout, scatter=True, markersize=50, marker=r"$\Downarrow$", color="green"),
     ]
 
     df2 = df.set_index(datetime_index)

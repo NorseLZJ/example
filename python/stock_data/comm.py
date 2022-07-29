@@ -5,6 +5,7 @@ from datetime import datetime, date
 import datetime as dt
 import pandas as pd
 from redis import *
+import os
 
 short_win = 12  # 短期EMA平滑天数
 long_win = 26  # 长期EMA平滑天数
@@ -70,18 +71,22 @@ def get_name_akshare(code: str):
     return format("sh%s" % code)
 
 
-def get_daily_data(_symbol: str):
+def get_daily_data(_symbol: str) -> pd.DataFrame:
     td = dt.date.today()
     end_date = str(td).replace("-", "")
     timestamp = datetime.timestamp(datetime.now())
     dt_object = datetime.fromtimestamp(int(timestamp) - 356 * 2 * 86400)
     start_date = (str(dt_object).split(" ")[0]).replace(" ", "")
     name = get_name_akshare(_symbol)
+    out_file = get_stock_data_file(_symbol)
+    if os.path.exists(out_file):
+        return pd.read_csv(out_file)
     if name == "":
         return None
     try:
         # 拿一年左右前复权的数据
         df = ak.stock_zh_a_daily(name, start_date=start_date, end_date=end_date, adjust="qfq")
+        df.to_csv(out_file, index=False)
         return df
     except Exception as e:
         print("get stock daily data[%s] err:%s" % (_symbol, e))
@@ -102,46 +107,12 @@ def get_minute_data(_symbol: str, period: str):
         return None
 
 
-def get_params_by_key(_df, key_list, idx):
-    if idx > len(_df):
-        return None
-    ret = []
-    for key in key_list:
-        ret.append(_df.loc[idx][key])
-    return ret
-
-
-def get_params(_df, idx):
-    """
-    params
-        _df pandas.DataFrame
-        idx _df index
-    return (date,open,high,low,close,dif,dea,macd,ma5,ma10,ma20,ma60)
-    """
-    if idx > len(_df):
-        return None
-    return (
-        _df.loc[idx]["date"],
-        _df.loc[idx]["open"],
-        _df.loc[idx]["high"],
-        _df.loc[idx]["low"],
-        _df.loc[idx]["close"],
-        _df.loc[idx]["dif"],
-        _df.loc[idx]["dea"],
-        _df.loc[idx]["macd"],
-        _df.loc[idx]["ma5"],
-        _df.loc[idx]["ma10"],
-        _df.loc[idx]["ma20"],
-        _df.loc[idx]["ma60"],
-    )
-
-
 def collect_data_by_json(_data):
     _df = pd.read_json(_data)
     return collect_data_by_df(_df)
 
 
-def collect_data_by_df(_df):
+def collect_data_by_df(_df) -> pd.DataFrame:
     if _df is None:
         return None
     (dif, dea, macd) = talib.MACD(_df["close"], fastperiod=short_win, slowperiod=long_win, signalperiod=macd_win)
@@ -206,3 +177,36 @@ def clean_data_by_name(df: pd.DataFrame, type: str) -> pd.DataFrame:
 
 def get_stock_data_file(symbol: str):
     return format("stock_data/%s.csv" % (symbol))
+
+
+dict_reflact = {
+    "index": 0,
+    "date": 1,
+    "open": 2,
+    "high": 3,
+    "low": 4,
+    "close": 5,
+    "ma60": 6,
+    "ma20": 7,
+    "ma10": 8,
+    "ma5": 9,
+    "macd": 10,
+    "dea": 11,
+    "dif": 12,
+    "volume": 13,
+    "money": 14,
+    "upper": 15,
+    "middle": 16,
+    "lower": 17,
+}
+
+
+def k(key: str) -> int:
+    v = dict_reflact.get(key)
+    if v is None:
+        return None
+    return v
+
+
+def get_stock_data_file(code: str):
+    return format("stock_data/%s.csv" % (code))
