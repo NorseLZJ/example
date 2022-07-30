@@ -13,7 +13,6 @@ get_code.code-workspace
 *target
 *data
 *out
-*stock_data
 
 
 cmd/fileserver/fileserver

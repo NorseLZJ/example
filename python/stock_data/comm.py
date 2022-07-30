@@ -11,7 +11,7 @@ short_win = 12  # 短期EMA平滑天数
 long_win = 26  # 长期EMA平滑天数
 macd_win = 20  # DEA线平滑天数
 pd.set_option("display.max_columns", None)
-pd.set_option("display.width", 500)
+pd.set_option("display.width", 1000)
 
 r = Redis(host="127.0.0.1", port=6379, decode_responses=True)
 industry_key = "industry"
@@ -85,7 +85,9 @@ def get_daily_data(_symbol: str) -> pd.DataFrame:
         return None
     try:
         # 拿一年左右前复权的数据
-        df = ak.stock_zh_a_daily(name, start_date=start_date, end_date=end_date, adjust="qfq")
+        df = ak.stock_zh_a_daily(
+            name, start_date=start_date, end_date=end_date, adjust="qfq"
+        )
         df.to_csv(out_file, index=False)
         return df
     except Exception as e:
@@ -115,7 +117,12 @@ def collect_data_by_json(_data):
 def collect_data_by_df(_df) -> pd.DataFrame:
     if _df is None:
         return None
-    (dif, dea, macd) = talib.MACD(_df["close"], fastperiod=short_win, slowperiod=long_win, signalperiod=macd_win)
+    (dif, dea, macd) = talib.MACD(
+        _df["close"],
+        fastperiod=short_win,
+        slowperiod=long_win,
+        signalperiod=macd_win,
+    )
     ma5 = np.around(talib.SMA(_df["close"], timeperiod=5), 2)
     ma10 = np.around(talib.SMA(_df["close"], timeperiod=10), 2)
     ma20 = np.around(talib.SMA(_df["close"], timeperiod=20), 2)
@@ -145,33 +152,22 @@ def collect_data_by_df(_df) -> pd.DataFrame:
 
 
 def clean_data_by_name(df: pd.DataFrame, type: str) -> pd.DataFrame:
-    def clean_signal(name: str):
-        if name.find("ST") != -1:
-            return np.nan
-
-        if name.find("退") != -1:
-            return np.nan
-
-        return 1
-
-    df["del"] = df.apply(lambda x: clean_signal(x["股票简称"]), axis=1)
-
-    # del_idx = df[df["del"] == True].index
-    # df.drop(del_idx, inplace=True)
-
-    df.dropna(inplace=True, axis=1)
-    df.drop(columns=["序号"], inplace=True, axis=1)
-
     if type == "zcfz":
         pass
     elif type == "lrb":
-        di = df[df["净利润同比"] <= 0.0].index
-        df.drop(di, inplace=True)
-        df["industry"] = df.apply(lambda x: get_industry(x["股票代码"], x["股票简称"]), axis=1)
-        df.sort_values(by=["industry", "净利润同比"], inplace=True, ignore_index=True, ascending=False)
+        df = df.loc[
+            (df["净利润同比"] > 5.0)
+            & (df["净利润同比"] < 300.0)
+            & (df["股票简称"].str.find("ST") == -1)
+            & (df["股票简称"].str.find("退") == -1),
+            :,
+        ]
+        df.sort_values(
+            by=["净利润同比"], inplace=True, ignore_index=True, ascending=False
+        )
     elif type == "xjll":
         pass
-    df.reset_index(inplace=True)
+    df.reset_index(inplace=True, drop=True)
     return df
 
 
@@ -180,24 +176,23 @@ def get_stock_data_file(symbol: str):
 
 
 dict_reflact = {
-    "index": 0,
-    "date": 1,
-    "open": 2,
-    "high": 3,
-    "low": 4,
-    "close": 5,
-    "ma60": 6,
-    "ma20": 7,
-    "ma10": 8,
-    "ma5": 9,
-    "macd": 10,
-    "dea": 11,
-    "dif": 12,
-    "volume": 13,
-    "money": 14,
-    "upper": 15,
-    "middle": 16,
-    "lower": 17,
+    "date": 0,
+    "open": 1,
+    "high": 2,
+    "low": 3,
+    "close": 4,
+    "ma60": 5,
+    "ma20": 6,
+    "ma10": 7,
+    "ma5": 8,
+    "macd": 9,
+    "dea": 10,
+    "dif": 11,
+    "volume": 12,
+    "money": 13,
+    "upper": 14,
+    "middle": 15,
+    "lower": 16,
 }
 
 
