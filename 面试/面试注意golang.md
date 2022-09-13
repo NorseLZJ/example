@@ -20,6 +20,8 @@ https://jishuin.proginn.com/p/763bfbd4cfd5
 
 - 函数定义和传参数必须要一致,接收指针,或者接收变量要看清
 
+- 如果函数参数有interface{} ,参数有断言,必须判断是否成功,不然会有可能panic
+
 
 # 特殊代码
 
