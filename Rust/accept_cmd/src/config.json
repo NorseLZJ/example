@@ -1,9 +1,0 @@
-{
-  "listen": 8988,
-  "options": {
-    "vh5": {
-      "start": "E:\\lzj\\Rust\\accept_cmd\\src\\start.bat",
-      "stop": "E:\\lzj\\Rust\\accept_cmd\\src\\stop.bat"
-    }
-  }
-}
