@@ -6,11 +6,81 @@ https://jishuin.proginn.com/p/763bfbd4cfd5
 
 # 需要仔细看看的问题
 
-- select
+# select
 
-- channel
+-  一般用法
 
+```go
+package main
 
+import "fmt"
+
+func send(out chan int) {
+	fmt.Println("send1")
+	out <- 1
+	fmt.Println("send2")
+	close(out)
+}
+
+func main() {
+	out := make(chan int)
+	go send(out)
+	for {
+		select {
+		case v, ok := <-out:
+			if ok {
+				fmt.Println(v)
+			} else {
+				fmt.Println("chan closed")
+				return
+			}
+			break
+		default:
+			continue
+		}
+	}
+}
+
+/*
+run result:
+send1
+1
+send2
+chan closed
+*/
+
+```
+
+# channel
+
+- channel 就是一个加锁的,环形(队列|数组) version:1.19.1 chan 定义 
+```go
+type hchan struct {
+	qcount   uint           // total data in the queue
+	dataqsiz uint           // size of the circular queue
+	buf      unsafe.Pointer // points to an array of dataqsiz elements 
+	// 存数据的数组
+	elemsize uint16
+	closed   uint32
+	elemtype *_type // element type
+	sendx    uint   // send index    
+	// 发送到哪一个下标
+	recvx    uint   // receive index 
+	// 存储到哪一个下标
+	recvq    waitq  // list of recv waiters
+	sendq    waitq  // list of send waiters
+
+	// lock protects all fields in hchan, as well as several
+	// fields in sudogs blocked on this channel.
+	//
+	// Do not change another G's status while holding this lock
+	// (in particular, do not ready a G), as this can deadlock
+	// with stack shrinking.
+	lock mutex
+	// 锁,保证多线程安全
+}
+
+```
 
 # 注意点
 
