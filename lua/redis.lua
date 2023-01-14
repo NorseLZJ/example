@@ -9,6 +9,7 @@ function __split(str, reps)
     end)
     return r, len
 end
+local found = flase
 if ARGV[4] then -- derivename 非空
     local members = redis.call("ZRANGEBYSCORE", KEYS[1], "-inf", "+inf", "limit", 0, -1)
     local derivename = tostring(ARGV[4])
@@ -18,11 +19,13 @@ if ARGV[4] then -- derivename 非空
             if to_string(a[2]) == derivename then
                 redis.call("ZREM", KEYS[1], v)
                 redis.call("ZADD", KEYS[1], ARGV[1], ARGV[2])
+                found = true
                 break
             end
         end
     end
-else
+end
+if (ARGV[4] and found == false) or ARGV[4] == nil then
     redis.call("ZADD", KEYS[1], ARGV[1], ARGV[2])
     local count = redis.call("ZCARD", KEYS[1])
     local platformCount = tonumber(ARGV[3])
@@ -35,3 +38,4 @@ else
         end
     end
 end
+
