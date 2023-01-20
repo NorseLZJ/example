@@ -12,6 +12,16 @@ _passport = ""
 _password = ""
 
 
+def file_info(self, path: str) -> tuple:
+    ss = path.split("\\")
+    filename = ss[len(ss) - 1]
+    stat = os.stat(path)
+    with open(path, "rb") as fp:
+        data = fp.read()
+        md5 = hashlib.md5(data).hexdigest()
+        return stat.st_size, filename, md5
+
+
 class PanClient(object):
     def __init__(self):
         self.token = ""
@@ -63,20 +73,11 @@ class PanClient(object):
             self.space_used = jsoner["data"]["SpaceUsed"]
             self.space_permanent = jsoner["data"]["SpacePermanent"]
 
-    def file_info(self, path: str) -> tuple:
-        ss = path.split("\\")
-        filename = ss[len(ss) - 1]
-        stat = os.stat(path)
-        with open(path, "rb") as fp:
-            data = fp.read()
-            md5 = hashlib.md5(data).hexdigest()
-            return stat.st_size, filename, md5
-
     def upload_request(self):
         url = format("%s/api/file/upload_request" % (_url))
         headers = self.headers()
         path = "D:\\document\\alter_add_file.sql"
-        size, filename, md5 = self.file_info(path)
+        size, filename, md5 = file_info(path)
         data = {
             "driveId": 0,
             "etag": md5,
