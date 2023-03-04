@@ -199,12 +199,6 @@ func MergeJpg() {
 	grids := []*gim.Grid{}
 	count := 0
 	_ = filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
-		if d == nil {
-			return err
-		}
-		if d.IsDir() {
-			return nil
-		}
 		if filepath.Ext(d.Name()) == ".jpg" && d.Name() != "merged.jpg" {
 			count += 1
 			grids = append(grids, &gim.Grid{
@@ -213,6 +207,9 @@ func MergeJpg() {
 		}
 		return nil
 	})
+	if len(grids) == 0 {
+		return
+	}
 	rgba, err := gim.New(grids, count, 1).Merge()
 	if err != nil {
 		log.Panicf(err.Error())
@@ -225,6 +222,12 @@ func MergeJpg() {
 	if err != nil {
 		log.Panicf(err.Error())
 	}
+	_ = filepath.WalkDir(".", func(path string, d fs.DirEntry, err error) error {
+		if filepath.Ext(d.Name()) == ".jpg" && d.Name() != "merged.jpg" {
+			os.Remove(d.Name())
+		}
+		return nil
+	})
 }
 
 func main() {
@@ -240,7 +243,6 @@ func main() {
 			log.Fatal(err)
 		}
 	*/
-	//MergeJpg()
 	err := FFmpegCmdSecRangeScreenShot(downUrl)
 	if err != nil {
 		log.Fatal(err)
