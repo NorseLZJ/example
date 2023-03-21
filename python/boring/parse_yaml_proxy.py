@@ -27,7 +27,7 @@ def parse_and_check(domain):
 
 if __name__ == "__main__":
     domains = []
-    with open("1670388083880.yml", encoding="UTF-8") as f:
+    with open("p1.yaml", encoding="UTF-8") as f:
         y = yaml.safe_load(f)
         for v in y["proxies"]:
             domains.append(v["server"])
