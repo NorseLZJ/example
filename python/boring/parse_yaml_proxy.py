@@ -1,6 +1,7 @@
 import yaml
 import socket
 import os
+import sys
 import concurrent.futures
 import numpy as np
 
@@ -26,8 +27,11 @@ def parse_and_check(domain):
 
 
 if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("输入文件!!!")
+        exit(1)
     domains = []
-    with open("p1.yaml", encoding="UTF-8") as f:
+    with open(sys.argv[1], encoding="UTF-8") as f:
         y = yaml.safe_load(f)
         for v in y["proxies"]:
             domains.append(v["server"])
