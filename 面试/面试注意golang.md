@@ -1,14 +1,12 @@
-
 # 一些笔试题链接
 
 https://jishuin.proginn.com/p/763bfbd4cfd5
-
 
 # 需要仔细看看的问题
 
 # select
 
--  一般用法
+- 一般用法
 
 ```go
 package main
@@ -53,19 +51,21 @@ chan closed
 
 # channel
 
-- channel 就是一个加锁的,环形(队列|数组) version:1.19.1 chan 定义 
+- channel 就是一个加锁的,环形(队列|数组) version:1.19.1 chan 定义
+
 ```go
+
 type hchan struct {
 	qcount   uint           // total data in the queue
 	dataqsiz uint           // size of the circular queue
-	buf      unsafe.Pointer // points to an array of dataqsiz elements 
+	buf      unsafe.Pointer // points to an array of dataqsiz elements
 	// 存数据的数组
 	elemsize uint16
 	closed   uint32
 	elemtype *_type // element type
-	sendx    uint   // send index    
+	sendx    uint   // send index
 	// 发送到哪一个下标
-	recvx    uint   // receive index 
+	recvx    uint   // receive index
 	// 存储到哪一个下标
 	recvq    waitq  // list of recv waiters
 	sendq    waitq  // list of send waiters
@@ -80,18 +80,20 @@ type hchan struct {
 	// 锁,保证多线程安全
 }
 
+
 ```
 
 # 注意点
 
-- 如果一个结构里边有map,优先考虑,map没有初始化就使用
+- 如果一个结构里边有 map,优先考虑,map 没有初始化就使用
 
-- map 的使用必须初始化, 大括号初始化,或者make
+- map 未初始化可以取数据不可以写数据
+
+- map 的使用必须初始化, 大括号初始化,或者 make
 
 - 函数定义和传参数必须要一致,接收指针,或者接收变量要看清
 
-- 如果函数参数有interface{} ,参数有断言,必须判断是否成功,不然会有可能panic
-
+- 如果函数参数有 interface{} ,参数有断言,必须判断是否成功,不然会有可能 panic
 
 # 特殊代码
 
@@ -124,17 +126,20 @@ type Slice []int
 func NewSlice() Slice {
          return make(Slice, 0)
 }
+
 func (s* Slice) Add(elem int) *Slice {
          *s = append(*s, elem)
          fmt.Print(elem)
          return s
 }
-func main() {  
+
+func main() {
          s := NewSlice()
          defer s.Add(1).Add(2).Add(3)
          s.Add(4)
 }
-// result:1243 
+
+// result:1243
 // 最后一条语句总是在倒数第二个位置出现,我也不知道为什么
 
 ```

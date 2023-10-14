@@ -3,27 +3,21 @@ import socket
 import os
 import sys
 import concurrent.futures
-import numpy as np
+import random
+import ping3
 
 
 def parse_and_check(domain):
-    idx = np.random.random_integers(low=1, high=99999999, size=1)[0]
-
-    def clean_file():
-        os.remove(f"{idx}.txt")
-
     try:
         ip = socket.gethostbyname(domain)
-        response = os.system(f"ping -c 1 {ip} >{idx}.txt")
-        if response == 0:
-            clean_file()
+        response = ping3.ping(ip, timeout=2)
+        if response is not None:
             return f"{domain} 是通畅的 {ip}"
         else:
-            clean_file()
-            return f"{domain} 是不通畅的 {ip}"
-    except socket.gaierror:
-        clean_file()
-        return f"{domain} 是无效的域名 {ip}"
+            return None
+    except socket.gaierror as e:
+        print(f"err:{e}")
+        return None
 
 
 if __name__ == "__main__":
@@ -36,6 +30,9 @@ if __name__ == "__main__":
         for v in y["proxies"]:
             domains.append(v["server"])
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=20) as executor:
-        for number, ret in zip(domains, executor.map(parse_and_check, domains)):
-            print("%s" % (ret))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+        futures = [executor.submit(parse_and_check, domain) for domain in domains]
+        for future, domain in zip(concurrent.futures.as_completed(futures), domains):
+            ret = future.result()
+            if ret:
+                print(ret)

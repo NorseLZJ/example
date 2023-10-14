@@ -14,5 +14,8 @@ if __name__ == "__main__":
         etf.to_csv("ETF.csv", index=False)
 
     etf = pd.read_csv(path)
+    for idx in range (len(etf)):
+        etf.iloc[idx][""]
+        pass
     print(etf.head(10))
     print(etf.tail(10))

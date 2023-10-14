@@ -26,7 +26,7 @@ async def download_file(url, session):
 """
 需要替换,一定的时间之后就会失效
 """
-url = "https://59-47-225-195.d.cjjd15.com:30443/download-cdn.123pan.cn/123-241/f5ae483c/1812752236-0/f5ae483cccc0f14ec15120652eb84cf1?v=2&t=1680944884&s=1f0ed3221b9fce60eb7dbe3c6c06934d&filename=Encounter.of.the.Spooky.Kind.II.1990.WEB-DL.4K.H265.AAC-CTRLTV.mp4&d=f6acb5e3"
+url = "https://36-134-210-67.pd1.123pan.cn:30443/download-cdn.123pan.cn/123-402/3c5b8451/1630998-0/3c5b845145ef9b6368b48d2796113592/c-m5?v=5&t=1695732060&s=1695732060842387033b799b611e4558cc6bd3a0a8&r=VR1FN4&bzc=1&bzs=1812752236&filename=Fedora-Workstation-Live-x86_64-38-1.6.iso&x-mf-biz-cid=823eb311-aae8-4a20-ac42-f9b45e7abcea-a0d664&auto_redirect=0&xmfcid=07c4840b-5783-478d-9347-153316b4ae3d-0-abf611255"
 
 
 async def main():
@@ -35,7 +35,7 @@ async def main():
         """
         需要知道文件名
         """
-        with open("a.mp4", "wb") as f:
+        with open("a.iso", "wb") as f:
             f.write(data)
 
 

@@ -3,10 +3,6 @@ import akshare as ak
 
 # 导入numpy模块
 import numpy as np
-
-# 导入matplotlib模块
-import matplotlib.pyplot as plt
-
 # 定义股票代码和日期范围
 stock_code = "sh000001"  # 浦发银行
 start_date = "2022-01-01"  # 开始日期
