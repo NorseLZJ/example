@@ -8,6 +8,18 @@ import (
 	"sync"
 )
 
+var (
+	mu          sync.RWMutex
+	portToMySQL = make(map[string]string)
+)
+
+func init() {
+	// 初始化端口到 MySQL 地址的映射
+	portToMySQL["3307"] = "mysql-server-ip1:3306"
+	portToMySQL["3308"] = "mysql-server-ip2:3306"
+	// 可以根据需要添加更多映射
+}
+
 func copyData(dst, src net.Conn, wg *sync.WaitGroup) {
 	defer wg.Done()
 	_, err := io.Copy(dst, src)
@@ -35,26 +47,41 @@ func handleClient(clientConn net.Conn, targetAddr string) {
 }
 
 func main() {
-	listenAddr := "0.0.0.0:8080"        // 代理监听地址
-	targetAddr := "172.17.241.105:6379" // MySQL 服务器地址
+	listenAddrs := []string{"0.0.0.0:3307", "0.0.0.0:3308"} // 代理监听地址列表
 
-	listener, err := net.Listen("tcp", listenAddr)
-	if err != nil {
-		log.Fatal(err)
+	for _, listenAddr := range listenAddrs {
+		go func(addr string) {
+			listener, err := net.Listen("tcp", addr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer listener.Close()
+
+			fmt.Printf("MySQL Proxy listening on %s...\n", addr)
+
+			for {
+				clientConn, err := listener.Accept()
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+
+				// 获取映射关系
+				mu.RLock()
+				targetAddr, ok := portToMySQL[addr]
+				mu.RUnlock()
+
+				if !ok {
+					log.Printf("No MySQL address found for port %s\n", addr)
+					clientConn.Close()
+					continue
+				}
+
+				go handleClient(clientConn, targetAddr)
+			}
+		}(listenAddr)
 	}
-	defer func() {
-		_ = listener.Close()
-	}()
 
-	fmt.Printf("MySQL Proxy listening on %s...\n", listenAddr)
-
-	for {
-		clientConn, err := listener.Accept()
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-
-		go handleClient(clientConn, targetAddr)
-	}
+	// 等待程序退出
+	select {}
 }
