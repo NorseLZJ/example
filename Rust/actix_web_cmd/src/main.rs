@@ -1,7 +1,8 @@
-use actix_web::{web, App, HttpServer, HttpResponse, Result};
+use actix_web::{web, App, HttpResponse, HttpServer, Result};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
+use std::process::Command;
 use std::sync::{Arc, Mutex};
 use tracing::{info, Level};
 
@@ -26,25 +27,47 @@ async fn exec_cmd(
 
         let config = data.lock().unwrap(); // 获取锁以访问配置
         if let Some(opts) = config.options.get(group) {
-            let bat = match opt.as_str() {
+            let cmd = match opt.as_str() {
                 "start" => &opts.start,
                 "stop" => &opts.stop,
                 _ => return Ok(HttpResponse::Ok().json("cmd error param check!")),
             };
 
-            if bat.is_empty() {
+            if cmd.is_empty() {
                 return Ok(HttpResponse::Ok().json("cmd error param not enough!"));
             }
 
-            let child = std::process::Command::new("cmd").arg("/C").arg(bat).spawn();
-            match child {
-                Ok(_) => {
-                    info!("success group: {} and opt: {}", group, opt);
-                    Ok(HttpResponse::Ok().json("cmd success"))
+            #[cfg(target_os = "windows")]
+            {
+                let child = std::process::Command::new("cmd").arg("/C").arg(cmd).spawn();
+                match child {
+                    Ok(_) => {
+                        info!("success group: {} and opt: {}", group, opt);
+                        Ok(HttpResponse::Ok().json("cmd success"))
+                    }
+                    Err(e) => {
+                        info!("failed group: {} and opt: {}, err: {}", group, opt, e);
+                        Ok(HttpResponse::Ok().json("cmd error param check!"))
+                    }
                 }
-                Err(e) => {
-                    info!("failed group: {} and opt: {},err: {}", group, opt,e);
-                    Ok(HttpResponse::Ok().json("cmd error param check!"))
+            }
+
+            #[cfg(not(target_os = "windows"))]
+            {
+                let mut child_cmd = Command::new("sh");
+                //child_cmd.arg("-c").arg(cmd);
+                child_cmd.arg("-c").arg(format!("{} {}", cmd, opt));
+
+                let child = child_cmd.spawn();
+                match child {
+                    Ok(_) => {
+                        info!("success group: {} and opt: {}", group, opt);
+                        Ok(HttpResponse::Ok().json("cmd success"))
+                    }
+                    Err(e) => {
+                        info!("failed group: {} and opt: {}, err: {}", group, opt, e);
+                        Ok(HttpResponse::Ok().json("cmd error param check!"))
+                    }
                 }
             }
         } else {
@@ -71,7 +94,10 @@ async fn main() -> std::io::Result<()> {
     println!("-----------------------------------------------");
     println!("listen: {}", config.listen);
     for (group, opts) in &config.options {
-        println!("group:{} \tstart: {}\tstop:{}", group, opts.start, opts.stop);
+        println!(
+            "group:{} \tstart: {}\tstop:{}",
+            group, opts.start, opts.stop
+        );
     }
     println!("-----------------------------------------------");
 
@@ -81,7 +107,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(config_data.clone())
             .service(web::resource("/cmd").route(web::get().to(exec_cmd)))
     })
-        .bind(host)?
-        .run()
-        .await
+    .bind(host)?
+    .run()
+    .await
 }
