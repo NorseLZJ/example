@@ -1,0 +1,90 @@
+[package]
+name = "examples_a"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing = "0.1.40"
+tracing-subscriber = "0.2.23"
+
+tokio = {version="1.35.1", features=["full"]}
+tokio-util = {version="0.7.10",features=["full"]}
+futures = { version = "0.3.0", features = ["thread-pool"]}
+bytes = "1.0.0"
+anyhow = "1.0"
+structopt = "0.3"
+rust_decimal = "1.33.1"
+
+sqlx = { version = "0.7", features = ["runtime-tokio", "tls-rustls", "mysql"] }
+
+tokio-udp = "0.1.6"
+
+# gen go_code
+regex = "1.10.2"
+
+# del lage file
+rayon = "1.8"
+
+protobuf-codegen = "3"
+protobuf = "3"
+jsonwebtoken = "9.2.0"
+
+[[bin]]
+name = "actix-cmd"
+path = "src/actix_cmd.rs"
+
+[[bin]]
+name = "gen_code"
+path = "src/gen_code.rs"
+
+[[bin]]
+name = "del_lage_file"
+path = "src/del_lage_file.rs"
+
+[[bin]]
+name = "json_decode"
+path = "src/json_decode.rs"
+
+[[bin]]
+name = "ticker"
+path = "src/ticker.rs"
+
+[[bin]]
+name = "sort"
+path = "src/sort.rs"
+
+[[bin]]
+name = "learn"
+path = "src/learn.rs"
+
+[[bin]]
+name = "gen_proto"
+path = "src/gen_proto.rs"
+
+
+[[bin]]
+name = "chat-client"
+path = "src/chat_client.rs"
+
+[[bin]]
+name = "mut-client"
+path = "src/mut_client.rs"
+
+
+[[bin]]
+name = "mut-server"
+path = "src/mut_server.rs"
+
+[[bin]]
+name = "robot"
+path = "robot/main.rs"
+
+[[bin]]
+name = "jwt"
+path = "src/jwt.rs"
+

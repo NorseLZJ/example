@@ -1,0 +1,12 @@
+{
+  "listen": "8988",
+  "options": {
+    "dopai": {
+      "start": "E:\\b_codes\\learn_rust\\actix_cmd\\start.bat"
+    },
+    "dopai2": {
+      "start1": "E:\\dop2\\GoNew\\__stop__all_dopai.bat",
+      "stop1": "E:\\dop2\\GoNew\\__stop__all_dopai.bat"
+    }
+  }
+}
