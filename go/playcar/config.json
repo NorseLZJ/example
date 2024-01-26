@@ -1,0 +1,14 @@
+{
+  "mysql": [
+    "GO|root:123456@tcp(127.0.0.1:3306)/dopai_go?parseTime=true&loc=Local",
+    "JAVA|root:123456@tcp(127.0.0.1:3306)/dopai?parseTime=true&loc=Local"
+  ],
+  "redis": {
+    "host": "172.23.176.238:6379",
+    "password": "",
+    "db": 1
+  },
+  "jwt_key": "dddd",
+  "listen": ":10000",
+  "log_level": 2
+}
