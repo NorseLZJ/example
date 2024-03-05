@@ -66,13 +66,13 @@ if __name__ == "__main__":
     symbol_list = ["300390", "600029", "688388"]
     etf_list = ["515120", "561160"]
 
-    # for symbol in symbol_list:
-    #     df_week = stock_data(period="weekly", symbol=symbol, start_date=start_date)
-    #     df_week["flag"] = (df_week["ma20"] > df_week["ma20"].shift()) & (
-    #         df_week["close"] > df_week["ma20"]
-    #     )
-    #     df_week["flag"] = df_week["flag"].astype(int)
-    #     df_week.to_excel(f"{symbol}_week.xlsx")
+    for symbol in symbol_list:
+        df_week = stock_data(period="weekly", symbol=symbol, start_date=start_date)
+        df_week["flag"] = (df_week["ma20"] > df_week["ma20"].shift()) & (
+            df_week["close"] > df_week["ma20"]
+        )
+        df_week["flag"] = df_week["flag"].astype(int)
+        df_week.to_excel(f"{symbol}_week.xlsx")
 
     for symbol in etf_list:
         df_week = etf_data(period="weekly", symbol=symbol, start_date=start_date)
@@ -80,4 +80,4 @@ if __name__ == "__main__":
             df_week["close"] > df_week["ma20"]
         )
         df_week["flag"] = df_week["flag"].astype(int)
-        df_week.to_excel(f"{symbol}_week.xlsx")
+        df_week.to_excel(f"etf_{symbol}_week.xlsx")
