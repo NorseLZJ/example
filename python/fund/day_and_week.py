@@ -2,6 +2,8 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 
+std_cache = "cache/"
+
 
 def modify(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(
@@ -51,14 +53,22 @@ def stock_data(period="", symbol="", start_date="") -> pd.DataFrame:
     df = ak.stock_zh_a_hist(
         period=period, symbol=symbol, start_date=start_date, adjust="qfq"
     )
-    return modify(df)
+    df = modify(df)
+    df["flag"] = (df["ma20"] > df["ma20"].shift()) & (df["close"] > df["ma20"])
+    df["flag"] = df["flag"].astype(int)
+    df.to_excel(f"{std_cache}{symbol}_week.xlsx")
+    return df
 
 
 def etf_data(period="", symbol="", start_date="") -> pd.DataFrame:
     df = ak.fund_etf_hist_em(
         period=period, symbol=symbol, start_date=start_date, adjust="qfq"
     )
-    return modify(df)
+    modify(df)
+    df["flag"] = (df["ma20"] > df["ma20"].shift()) & (df["close"] > df["ma20"])
+    df["flag"] = df["flag"].astype(int)
+    df.to_excel(f"{std_cache}etf_{symbol}_week.xlsx")
+    return df
 
 
 if __name__ == "__main__":
@@ -68,16 +78,6 @@ if __name__ == "__main__":
 
     for symbol in symbol_list:
         df_week = stock_data(period="weekly", symbol=symbol, start_date=start_date)
-        df_week["flag"] = (df_week["ma20"] > df_week["ma20"].shift()) & (
-            df_week["close"] > df_week["ma20"]
-        )
-        df_week["flag"] = df_week["flag"].astype(int)
-        df_week.to_excel(f"{symbol}_week.xlsx")
 
     for symbol in etf_list:
         df_week = etf_data(period="weekly", symbol=symbol, start_date=start_date)
-        df_week["flag"] = (df_week["ma20"] > df_week["ma20"].shift()) & (
-            df_week["close"] > df_week["ma20"]
-        )
-        df_week["flag"] = df_week["flag"].astype(int)
-        df_week.to_excel(f"etf_{symbol}_week.xlsx")
