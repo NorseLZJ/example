@@ -7,6 +7,8 @@ import datetime as dt2
 
 std_cache = "cache/"
 
+dev_model = False
+
 
 def modify(df: pd.DataFrame) -> pd.DataFrame:
     df.rename(
@@ -59,7 +61,8 @@ def stock_data(period="", symbol="", start_date="") -> pd.DataFrame:
     df = modify(df)
     df["flag"] = (df["ma20"] > df["ma20"].shift()) & (df["close"] > df["ma20"])
     df["flag"] = df["flag"].astype(int)
-    df.to_excel(f"{std_cache}{symbol}_week.xlsx")
+    if dev_model:
+        df.to_excel(f"{std_cache}{symbol}_week.xlsx")
     return df
 
 
@@ -70,12 +73,13 @@ def etf_data(period="", symbol="", start_date="") -> pd.DataFrame:
     modify(df)
     df["flag"] = (df["ma20"] > df["ma20"].shift()) & (df["close"] > df["ma20"])
     df["flag"] = df["flag"].astype(int)
-    df.to_excel(f"{std_cache}etf_{symbol}_week.xlsx")
+    if dev_model:
+        df.to_excel(f"{std_cache}etf_{symbol}_week.xlsx")
     return df
 
 
 def trade_time_list(df: pd.DataFrame) -> list:
-    ok_date = df_week.loc[df_week["flag"] == 1, "date"]
+    ok_date = df.loc[df["flag"] == 1, "date"]
     ok_date = ok_date.to_list()
     time_list = []
     for v in ok_date:
@@ -105,6 +109,7 @@ def is_in_time_list(time_list: list, date_str: str) -> bool:
 
 
 if __name__ == "__main__":
+    dev_model = True
     start_date = "20220101"
     # symbol_list = ["300390", "600029", "688388"]
     symbol_list = ["600029"]
