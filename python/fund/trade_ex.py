@@ -28,6 +28,8 @@ class TestStrategy(bt.Strategy):
 
         today_close = self.dataclose[0]
 
+        # self.log(f"RANGE , close:{today_close}")
+
         if dt == "2022-11-25":
             cash = self.broker.getcash()
             size = int((cash / (today_close * 100))) * 100
