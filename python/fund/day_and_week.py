@@ -2,6 +2,9 @@ import akshare as ak
 import pandas as pd
 import numpy as np
 
+from datetime import datetime, timedelta
+import datetime as dt2
+
 std_cache = "cache/"
 
 
@@ -71,13 +74,52 @@ def etf_data(period="", symbol="", start_date="") -> pd.DataFrame:
     return df
 
 
+def trade_time_list(df: pd.DataFrame) -> list:
+    ok_date = df_week.loc[df_week["flag"] == 1, "date"]
+    ok_date = ok_date.to_list()
+    time_list = []
+    for v in ok_date:
+        date_object = datetime.strptime(str(v), "%Y-%m-%d")
+
+        t1 = date_object + timedelta(days=3)
+        time_start = datetime.combine(
+            t1.date(), datetime.strptime("09:30", "%H:%M").time()
+        )
+
+        t2 = date_object + timedelta(days=7)
+        time_end = datetime.combine(
+            t2.date(), datetime.strptime("15:00", "%H:%M").time()
+        )
+        # print(f"T1 : {time_start} T2: {time_end}")
+        time_list.append([time_start, time_end])
+    return time_list
+
+
+def is_in_time_list(time_list: list, date_str: str) -> bool:
+    date_object = dt2.datetime.strptime(date_str, "%Y-%m-%d")
+    time_object = dt2.datetime(
+        date_object.year, date_object.month, date_object.day, 10, 0
+    )
+    is_within_interval = any(start <= time_object <= end for start, end in time_list)
+    return is_within_interval
+
+
 if __name__ == "__main__":
-    start_date = ""
-    symbol_list = ["300390", "600029", "688388"]
+    start_date = "20220101"
+    # symbol_list = ["300390", "600029", "688388"]
+    symbol_list = ["600029"]
     etf_list = ["515120", "561160"]
 
     for symbol in symbol_list:
         df_week = stock_data(period="weekly", symbol=symbol, start_date=start_date)
+        time_list = trade_time_list(df_week)
+        # given_time = dt2.datetime(2023, 5, 3, 10, 0)
+        # is_within_interval = any(start <= given_time <= end for start, end in time_list)
+        date_str = "2023-05-03"
+        print(is_in_time_list(time_list, date_str))
+        date_str = "2023-04-30"
+        print(is_in_time_list(time_list, date_str))
+        # print(is_within_interval)
 
-    for symbol in etf_list:
-        df_week = etf_data(period="weekly", symbol=symbol, start_date=start_date)
+    # for symbol in etf_list:
+    #     df_week = etf_data(period="weekly", symbol=symbol, start_date=start_date)
