@@ -48,3 +48,4 @@ nodejs/sword/Placements
 nodejs/sword/*.json
 
 fund/cache
+myenv
