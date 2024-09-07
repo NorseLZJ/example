@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"io/ioutil"
+	"os"
 	"os/exec"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Config struct {
@@ -58,7 +59,7 @@ func execCmd(c *gin.Context) {
 }
 
 func DecodeConfig() {
-	data, err := ioutil.ReadFile(*confPath)
+	data, err := os.ReadFile(*confPath)
 	if err != nil {
 		panic(err)
 	}
